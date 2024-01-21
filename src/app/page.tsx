@@ -7,7 +7,6 @@ import SearchInput from '@/components/ui/search';
 import { TypographySmall } from '@/components/ui/typhography';
 
 export default function Home() {
-  // TODO: Footer "Prefer to create catalogs instead? Click here to register or log in." sign-up or login
   // TODO: Login pop-up (dialog)
   return (
     <>
@@ -49,7 +48,7 @@ export default function Home() {
             <SearchCatalog />
             <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
               Prefer to create catalogs instead? Click here to{' '}
-              <AuthenticationDrawerDialog className='p-0 text-primary/60' variant='link'>
+              <AuthenticationDrawerDialog className='p-0 text-primary/60' variant='link' authenticationMode='register'>
                 register
               </AuthenticationDrawerDialog>{' '}
               or{' '}
