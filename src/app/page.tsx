@@ -1,13 +1,11 @@
-import { AuthenticationDrawerDialog } from '@/components/login-dialog';
+import { LoginDrawerDialog } from '@/components/login-dialog';
+import RegisterDrawerDialog from '@/components/register-dialog';
 import SearchCatalog from '@/components/search-catalog';
 import { ModeToggle } from '@/components/toggle-theme';
-import { Button } from '@/components/ui/button';
 import Container from '@/components/ui/container';
-import SearchInput from '@/components/ui/search';
 import { TypographySmall } from '@/components/ui/typhography';
 
 export default function Home() {
-  // TODO: Login pop-up (dialog)
   return (
     <>
       <svg
@@ -34,9 +32,9 @@ export default function Home() {
           <div className='scroll-m-20 text-2xl font-semibold tracking-tight'>catalog</div>
           <div className='flex justify-center items-center'>
             <ModeToggle />
-            <AuthenticationDrawerDialog size='sm' variant='ghost'>
+            <LoginDrawerDialog size='sm' variant='ghost'>
               Log in
-            </AuthenticationDrawerDialog>
+            </LoginDrawerDialog>
           </div>
         </nav>
         <Container size={'lg'} className='flex-1 flex flex-col'>
@@ -48,13 +46,13 @@ export default function Home() {
             <SearchCatalog />
             <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
               Prefer to create catalogs instead? Click here to{' '}
-              <AuthenticationDrawerDialog className='p-0 text-primary/60' variant='link' authenticationMode='register'>
+              <RegisterDrawerDialog className='p-0 text-primary/60' variant='link'>
                 register
-              </AuthenticationDrawerDialog>{' '}
+              </RegisterDrawerDialog>{' '}
               or{' '}
-              <AuthenticationDrawerDialog className='p-0 text-primary/60' variant='link'>
+              <LoginDrawerDialog className='p-0 text-primary/60' variant='link'>
                 log in
-              </AuthenticationDrawerDialog>
+              </LoginDrawerDialog>
               .
             </TypographySmall>
           </main>

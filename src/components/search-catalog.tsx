@@ -87,8 +87,6 @@ const catalogs = ['Emoji', 'Calendar'];
 // }
 
 function SearchCatalog() {
-  const width = useMemo(() => innerWidth, []);
-
   return (
     <div className='h-60 sm:h-[40vh] w-full sm:w-2/3'>
       <SearchInput className='sm:text-lg text-base px-4 py-6 sm:py-7 shadow-md sm:border-2 border-primary/60' />

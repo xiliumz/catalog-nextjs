@@ -1,52 +1,40 @@
 'use client';
-import * as React from 'react';
-
-import { Button, ButtonProps } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { RegisterForm } from './register-dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import Google from './ui/google';
+import { Input } from './ui/input';
+import { Button, ButtonProps } from './ui/button';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
+import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
+import { LoginForm } from './login-dialog';
 
-interface LoginProps extends ButtonProps {}
-const LOGIN_EVENT = 'login';
+interface RegisterProps extends ButtonProps {}
 
-export function LoginDrawerDialog({ children, className, variant, ...props }: LoginProps) {
-  const [open, setOpenLogin] = React.useState(false);
-  const [isLogin, setIsLogin] = React.useState(true);
+const REGISTER_EVENT = 'register';
+
+function RegisterDrawerDialog({ children, className, variant, ...props }: RegisterProps) {
+  const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const [isLogin, setIsLogin] = useState(false);
 
-  React.useEffect(() => {
-    addCustomListener(LOGIN_EVENT, () => {
-      setIsLogin(true);
+  useEffect(() => {
+    addCustomListener(REGISTER_EVENT, () => {
+      setIsLogin(false);
     });
-
-    return () => {
-      removeCustomListener(LOGIN_EVENT, () => {});
-    };
+    return () => removeCustomListener(REGISTER_EVENT, () => {});
   }, []);
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
+      <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
         <DialogTrigger asChild>
           <Button
-            {...props}
             onClick={() => {
-              emitEvent(LOGIN_EVENT);
+              emitEvent(REGISTER_EVENT);
             }}
             className={className}
             variant={variant ? variant : 'outline'}
@@ -59,7 +47,7 @@ export function LoginDrawerDialog({ children, className, variant, ...props }: Lo
             <DialogHeader className='mb-10 text-muted-foreground'>
               <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
             </DialogHeader>
-            {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegisterForm setIsLogin={setIsLogin} />}
+            {!isLogin ? <RegisterForm setIsLogin={setIsLogin} /> : <LoginForm setIsLogin={setIsLogin} />}
           </div>
         </DialogContent>
       </Dialog>
@@ -67,14 +55,14 @@ export function LoginDrawerDialog({ children, className, variant, ...props }: Lo
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpenLogin}>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button
           {...props}
-          className={className}
           onClick={() => {
-            emitEvent(LOGIN_EVENT);
+            emitEvent(REGISTER_EVENT);
           }}
+          className={className}
           variant={variant ? variant : 'outline'}
         >
           {children}
@@ -85,30 +73,34 @@ export function LoginDrawerDialog({ children, className, variant, ...props }: Lo
           <DialogHeader className='mb-10 text-muted-foreground'>
             <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
           </DialogHeader>
-          {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegisterForm setIsLogin={setIsLogin} />}
+          {!isLogin ? <RegisterForm setIsLogin={setIsLogin} /> : <LoginForm setIsLogin={setIsLogin} />}{' '}
         </div>
       </DrawerContent>
     </Drawer>
   );
 }
 
-const loginSchema = z.object({
+export default RegisterDrawerDialog;
+
+const registerSchema = z.object({
+  username: z.string().min(6, { message: 'Username must contain at least 6 characters' }),
   email: z.string().email().max(100),
   password: z.string().min(6, { message: 'Password must contain at least 6 characters' }),
 });
 
-export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof registerSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -116,10 +108,6 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
 
   return (
     <>
-      <Button className='h-fit w-full items-center gap-2 py-3 font-semibold' variant='outline'>
-        <Google /> Continue with Google
-      </Button>
-      <DialogDescription className='text-center mt-6 mb-2'>Or</DialogDescription>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
@@ -150,20 +138,20 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             )}
           />
           <Button className='w-full' type='submit'>
-            Log in
+            Create account
           </Button>
         </form>
       </Form>
       <DialogDescription className='text-center mt-6'>
-        No account?{' '}
+        Already have an account?{' '}
         <Button
           className='p-0 text-primary/60'
-          onClick={() => {
-            setIsLogin(false);
-          }}
           variant='link'
+          onClick={() => {
+            setIsLogin(true);
+          }}
         >
-          Create one
+          Log in
         </Button>
       </DialogDescription>
     </>
