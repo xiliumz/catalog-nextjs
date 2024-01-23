@@ -112,6 +112,20 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
             control={form.control}
+            name='username'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input className='text-base py-6' placeholder='Enter your username' type='text' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name='email'
             render={({ field }) => (
               <FormItem>

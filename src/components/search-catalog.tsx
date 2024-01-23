@@ -4,6 +4,7 @@ import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils'
 import { FormEvent, useEffect, useState } from 'react';
 import Loader from './ui/loader';
 import SearchInput from './ui/search';
+import { Search } from 'lucide-react';
 
 const DATA = ['helloworld'];
 const SEARCH_EVENT = 'search';
@@ -42,15 +43,20 @@ function SearchCatalog() {
 
   return (
     <div className='h-60 sm:h-[40vh] w-full sm:w-2/3'>
-      <div className='shadow-md sm:border-2 border-primary/60 rounded-2xl animate-fade-down animate-duration-500 animate-ease-out'>
-        <SearchInput
-          className={`sm:text-lg text-base px-4 py-6 sm:py-7 ${
-            loading || searched.length !== 0 ? 'rounded-b-none' : ''
+      <div className='shadow-md sm:border-2 border-primary/60 border rounded-2xl animate-fade-down animate-duration-500 animate-ease-out'>
+        <div
+          className={`bg-background px-3 flex items-center border rounded-2xl ${
+            (loading || searched.length !== 0) && 'rounded-b-none'
           }`}
-          value={value}
-          onInput={onInput}
-          onKeyUp={() => {}}
-        />
+        >
+          <Search className='text-muted-foreground' />
+          <SearchInput
+            className={`sm:text-lg text-base py-6 sm:py-7 border-l-0 rounded-l-none border-none`}
+            value={value}
+            onInput={onInput}
+            onKeyUp={() => {}}
+          />
+        </div>
         <SearchedList loading={loading} searched={searched} />
       </div>
     </div>
