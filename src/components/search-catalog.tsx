@@ -1,97 +1,81 @@
 'use client';
 
-import React, { HTMLAttributes, useCallback, useMemo, useState } from 'react';
-import { Calculator, Calendar, CreditCard, Search, Settings, Smile, User } from 'lucide-react';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/components/ui/command';
+import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
+import { FormEvent, useEffect, useState } from 'react';
+import Loader from './ui/loader';
 import SearchInput from './ui/search';
 
-const catalogs = ['Emoji', 'Calendar'];
-
-// export function SearchCatalogs() {
-//   const [inputValue, setInputValue] = useState('');
-//   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
-//   const [searchedArray, setSearchedArray] = useState<string[]>([]);
-//   const catalogArray = catalogs;
-
-//   const onInputChange = useCallback((e: React.FormEvent<HTMLInputElement>, timeoutId: NodeJS.Timeout | undefined) => {
-//     clearTimeout(timeoutId);
-//     setInputValue(e.currentTarget.value);
-//     const timeout = setTimeout(() => {
-//       console.log(inputValue);
-//       const newCatalog = catalogArray.flatMap((catalog) =>
-//         catalog.toLocaleLowerCase().search(inputValue.toLocaleLowerCase()) !== -1 ? catalog : []
-//       );
-//       setSearchedArray(newCatalog);
-//     }, 1000);
-//     setTimeoutId(timeout);
-//   }, []);
-
-//   return (
-//     <div className='h-80 w-full md:w-3/4 '>
-//       <Command className={'rounded-lg sm:border-4 border-2 border-primary/20 shadow-md overflow-auto h-min mx-auto'}>
-//         <CommandInput
-//           className='border-none sm:text-lg'
-//           placeholder={width >= 425 ? 'Search catalogs using code or id...' : 'Search catalogs...'}
-//           onInput={(e) => onInputChange(e, timeoutId)}
-//           value={inputValue}
-//         />
-//         {searchedArray.length !== 0 && (
-//           <CommandList>
-//             <CommandEmpty>No results found.</CommandEmpty>
-//             <CommandGroup>
-//               <CommandItem>
-//                 <Calendar className='mr-2 h-4 w-4' />
-//                 <span>Calendar</span>
-//               </CommandItem>
-//               <CommandItem>
-//                 <Smile className='mr-2 h-4 w-4' />
-//                 <span>Search Emoji</span>
-//               </CommandItem>
-//               <CommandItem>
-//                 <Calculator className='mr-2 h-4 w-4' />
-//                 <span>Calculator</span>
-//               </CommandItem>
-//             </CommandGroup>
-//             <CommandSeparator />
-//             <CommandGroup heading='Settings'>
-//               <CommandItem>
-//                 <User className='mr-2 h-4 w-4' />
-//                 <span>Profile</span>
-//                 <CommandShortcut>⌘P</CommandShortcut>
-//               </CommandItem>
-//               <CommandItem>
-//                 <CreditCard className='mr-2 h-4 w-4' />
-//                 <span>Billing</span>
-//                 <CommandShortcut>⌘B</CommandShortcut>
-//               </CommandItem>
-//               <CommandItem>
-//                 <Settings className='mr-2 h-4 w-4' />
-//                 <span>Settings</span>
-//                 <CommandShortcut>⌘S</CommandShortcut>
-//               </CommandItem>
-//             </CommandGroup>
-//           </CommandList>
-//         )}
-//       </Command>
-//     </div>
-//   );
-// }
+const DATA = ['helloworld'];
+const SEARCH_EVENT = 'search';
 
 function SearchCatalog() {
+  const [value, setValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState<string[]>([]);
+
+  const onInput = (e: FormEvent<HTMLInputElement>) => {
+    setValue(e.currentTarget.value);
+    setLoading(true);
+    emitEvent<string>(SEARCH_EVENT, e.currentTarget.value);
+  };
+
+  useEffect(() => {
+    let id = setTimeout(() => {});
+
+    addCustomListener(SEARCH_EVENT, ((e: CustomEvent<string>) => {
+      clearTimeout(id);
+      const val = e.detail;
+      id = setTimeout(() => {
+        if (val === '') {
+          setSearched([]);
+        } else {
+          setSearched(DATA.filter((title) => title.toLowerCase().search(val.toLowerCase()) !== -1));
+        }
+        setLoading(false);
+      }, 1000);
+    }) as EventListener);
+
+    return () => {
+      removeCustomListener(SEARCH_EVENT, () => {});
+    };
+  }, []);
+
   return (
     <div className='h-60 sm:h-[40vh] w-full sm:w-2/3'>
-      <SearchInput className='sm:text-lg text-base px-4 py-6 sm:py-7 shadow-md sm:border-2 border-primary/60' />
+      <div className='shadow-md sm:border-2 border-primary/60 rounded-2xl animate-fade-down animate-duration-500 animate-ease-out'>
+        <SearchInput
+          className={`sm:text-lg text-base px-4 py-6 sm:py-7 ${
+            loading || searched.length !== 0 ? 'rounded-b-none' : ''
+          }`}
+          value={value}
+          onInput={onInput}
+          onKeyUp={() => {}}
+        />
+        <SearchedList loading={loading} searched={searched} />
+      </div>
     </div>
   );
 }
 
 export default SearchCatalog;
+
+function SearchedList({ loading, searched }: { loading: boolean; searched: string[] }) {
+  if (loading || searched.length !== 0) {
+    return (
+      <div className='w-full bg-background rounded-b-2xl text-base h-fit'>
+        {loading && (
+          <p className='text-sm font-medium leading-none text-muted-foreground/85 flex items-center gap-2 justify-center p-5 animate-pulse hover:cursor-wait'>
+            <Loader className='text-muted-foreground/85 inline-block' /> Loading
+          </p>
+        )}
+        {searched.length !== 0 &&
+          !loading &&
+          searched.map((data) => (
+            <p className='text-sm font-semibold leading-none p-5 px-7 capitalize hover:bg-secondary rounded-b-2xl hover:cursor-pointer'>
+              {data}
+            </p>
+          ))}
+      </div>
+    );
+  }
+}
