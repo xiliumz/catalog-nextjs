@@ -15,7 +15,9 @@ const containerVariants = cva('px-4 md:px-8 w-full mx-auto w-full', {
   defaultVariants: { size: 'xl' },
 });
 
-interface ContainerInterface extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof containerVariants> {}
+export interface containerVariantsProps extends VariantProps<typeof containerVariants> {}
+
+interface ContainerInterface extends HTMLAttributes<HTMLDivElement>, containerVariantsProps {}
 
 function Container({ children, className, size, ...props }: ContainerInterface) {
   return (

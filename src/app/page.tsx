@@ -1,8 +1,11 @@
-import { LoginDrawerDialog } from '@/components/login-dialog';
-import RegisterDrawerDialog from '@/components/register-dialog';
-import SearchCatalog from '@/components/search-catalog';
+import { LoginDrawerDialog } from '@/components/auth/login-dialog';
+import RegisterDrawerDialog from '@/components/auth/register-dialog';
+import FooterHome from '@/components/home/footer';
+import SearchCatalog from '@/components/home/search-catalog';
+import NavigationBar from '@/components/navigation-bar';
 import { ModeToggle } from '@/components/toggle-theme';
 import Container from '@/components/ui/container';
+import { Toaster } from '@/components/ui/toaster';
 import { TypographySmall } from '@/components/ui/typhography';
 
 export default function Home() {
@@ -28,15 +31,12 @@ export default function Home() {
         </defs>
       </svg>
       <div className='min-h-[100vh] max-h-[100vh] flex flex-col overflow-hidden'>
-        <nav className='container flex w-full justify-between items-center px-4 pt-3'>
-          <div className='scroll-m-20 text-2xl font-semibold tracking-tight'>catalog</div>
+        <NavigationBar>
           <div className='flex justify-center items-center'>
             <ModeToggle />
-            <LoginDrawerDialog size='sm' variant='ghost'>
-              Log in
-            </LoginDrawerDialog>
+            <LoginDrawerDialog size='sm' variant='ghost' />
           </div>
-        </nav>
+        </NavigationBar>
         <Container size={'lg'} className='flex-1 flex flex-col'>
           <main className='animate-fade-up animate-duration-500 flex flex-col justify-center h-full flex-1 gap-10 md:gap-16 items-center pb-4 pt-16 sm:pt-28'>
             <h1 className='text-2xl font-semibold tracking-tight lg:text-3xl text-center leading-loose opacity-85'>
@@ -44,19 +44,10 @@ export default function Home() {
               <span className='text-primary'>Showcasing and Presenting</span> Catalogs
             </h1>
             <SearchCatalog />
-            <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
-              Prefer to create catalogs instead? Click here to{' '}
-              <RegisterDrawerDialog className='p-0 text-primary/60' variant='link'>
-                register
-              </RegisterDrawerDialog>{' '}
-              or{' '}
-              <LoginDrawerDialog className='p-0 text-primary/60' variant='link'>
-                log in
-              </LoginDrawerDialog>
-              .
-            </TypographySmall>
+            <FooterHome />
           </main>
         </Container>
+        <Toaster />
       </div>
     </>
   );

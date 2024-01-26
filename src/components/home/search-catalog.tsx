@@ -2,8 +2,8 @@
 
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { FormEvent, useEffect, useState } from 'react';
-import Loader from './ui/loader';
-import SearchInput from './ui/search';
+import Loader from '../ui/loader';
+import SearchInput from '../ui/search';
 import { Search } from 'lucide-react';
 
 const DATA = ['helloworld'];

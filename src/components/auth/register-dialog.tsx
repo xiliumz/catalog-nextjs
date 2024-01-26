@@ -1,20 +1,22 @@
 'use client';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { HOST } from '@/lib/global-var';
+import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import { Input } from './ui/input';
-import { Button, ButtonProps } from './ui/button';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
+import { Button, ButtonProps } from '../ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Input } from '../ui/input';
+import { useToast } from '../ui/use-toast';
 import { LoginForm } from './login-dialog';
 
 interface RegisterProps extends ButtonProps {}
 
-const REGISTER_EVENT = 'register';
+export const REGISTER_EVENT = 'register';
 
 function RegisterDrawerDialog({ children, className, variant, ...props }: RegisterProps) {
   const [open, setOpen] = React.useState(false);
@@ -89,6 +91,8 @@ const registerSchema = z.object({
 });
 
 export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
+  const { toast } = useToast();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -100,10 +104,38 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    const raw = JSON.stringify({
+      email: values.email,
+      username: values.username,
+      password: values.password,
+    });
+
+    try {
+      const res = await fetch(`${HOST}/users/register`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow',
+      });
+      const resJson = await res.json();
+      if (!res.ok) throw new Error(resJson.errors);
+      toast({
+        description: 'Registration successful. Please log in.',
+      });
+      setIsLogin(true);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: error.message,
+        });
+      }
+    }
   }
 
   return (

@@ -12,28 +12,39 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import { setSession } from '@/features/userSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import Google from '../ui/google';
+import { useToast } from '../ui/use-toast';
 import { RegisterForm } from './register-dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import Google from './ui/google';
 
 interface LoginProps extends ButtonProps {}
-const LOGIN_EVENT = 'login';
+export const LOGIN_EVENT = 'login';
 
-export function LoginDrawerDialog({ children, className, variant, ...props }: LoginProps) {
+export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) {
   const [open, setOpenLogin] = React.useState(false);
   const [isLogin, setIsLogin] = React.useState(true);
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const session = useAppSelector((s) => s.user.session);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
+    dispatch(setSession(Cookies.get('session') || ''));
+    // TODO: If session exists, try to fetch getUser() to check if the token valid,
+    // if it works then place the response into user's store
+
     addCustomListener(LOGIN_EVENT, () => {
       setIsLogin(true);
     });
-
     return () => {
       removeCustomListener(LOGIN_EVENT, () => {});
     };
@@ -43,15 +54,19 @@ export function LoginDrawerDialog({ children, className, variant, ...props }: Lo
     return (
       <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
         <DialogTrigger asChild>
+          {/* TODO: Fix on click */}
           <Button
             {...props}
             onClick={() => {
-              emitEvent(LOGIN_EVENT);
+              if (!session) {
+                emitEvent(LOGIN_EVENT);
+                return;
+              }
             }}
             className={className}
             variant={variant ? variant : 'outline'}
           >
-            {children}
+            {!session ? `Log in` : `Dashboard`}
           </Button>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
@@ -69,15 +84,19 @@ export function LoginDrawerDialog({ children, className, variant, ...props }: Lo
   return (
     <Drawer open={open} onOpenChange={setOpenLogin}>
       <DrawerTrigger asChild>
+        {/* TODO: Fix on click */}
         <Button
           {...props}
           className={className}
           onClick={() => {
-            emitEvent(LOGIN_EVENT);
+            if (!session) {
+              emitEvent(LOGIN_EVENT);
+              return;
+            }
           }}
           variant={variant ? variant : 'outline'}
         >
-          {children}
+          {!session ? `Log in` : `Dashboard`}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -98,6 +117,10 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { toast } = useToast();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -109,9 +132,39 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    const raw = JSON.stringify({
+      email: values.email,
+      password: values.password,
+    });
+
+    fetch(`${HOST}/users/login`, {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+    })
+      .then((response) => {
+        if (response.status >= 500) throw new Error('Internal server error, please contact admin');
+        return response.json();
+      })
+      .then((result: any) => {
+        const token = result.data.token;
+        Cookies.set('session', token);
+        dispatch(setSession(token));
+        router.push('/dashboard');
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          toast({
+            variant: 'destructive',
+            title: 'Uh oh! Something went wrong.',
+            description: error.message,
+          });
+        }
+      });
   }
 
   return (
