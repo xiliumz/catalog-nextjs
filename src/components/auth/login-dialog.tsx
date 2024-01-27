@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { setSession } from '@/features/userSlice';
+import { setSession, setUser } from '@/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { HOST } from '@/lib/global-var';
@@ -36,11 +36,33 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const session = useAppSelector((s) => s.user.session);
   const dispatch = useAppDispatch();
+  const { toast } = useToast();
 
   React.useEffect(() => {
-    dispatch(setSession(Cookies.get('session') || ''));
-    // TODO: If session exists, try to fetch getUser() to check if the token valid,
-    // if it works then place the response into user's store
+    const token = Cookies.get('session');
+    if (token) {
+      dispatch(setSession(token));
+      var myHeaders = new Headers();
+      myHeaders.append('Authorization', token);
+
+      fetch(`${HOST}/users/current`, {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          const data = result.data;
+          dispatch(setUser(data));
+        })
+        .catch((error) => {
+          toast({
+            variant: 'destructive',
+            title: 'Uh oh! Something went wrong.',
+            description: error.message,
+          });
+        });
+    }
 
     addCustomListener(LOGIN_EVENT, () => {
       setIsLogin(true);
