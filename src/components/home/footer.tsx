@@ -29,8 +29,8 @@ function FooterHome() {
   return (
     <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
       Prefer to create catalogs instead? Click here to{' '}
-      <RegisterDrawerDialog className='p-0 text-primary/60' variant='link' />
-      or <LoginDrawerDialog className='p-0 text-primary/60' variant='link' />.
+      <RegisterDrawerDialog className='p-0 text-primary/60' variant='link' /> or{' '}
+      <LoginDrawerDialog className='p-0 text-primary/60' variant='link' />.
     </TypographySmall>
   );
 }

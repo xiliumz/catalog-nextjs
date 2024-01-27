@@ -1,3 +1,4 @@
+import LogginButtonWrapper from '@/components/auth/login-button-wrapper';
 import { LoginDrawerDialog } from '@/components/auth/login-dialog';
 import RegisterDrawerDialog from '@/components/auth/register-dialog';
 import FooterHome from '@/components/home/footer';
@@ -34,7 +35,7 @@ export default function Home() {
         <NavigationBar>
           <div className='flex justify-center items-center'>
             <ModeToggle />
-            <LoginDrawerDialog size='sm' variant='ghost' />
+            <LogginButtonWrapper />
           </div>
         </NavigationBar>
         <Container size={'lg'} className='flex-1 flex flex-col'>

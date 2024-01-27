@@ -76,7 +76,6 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
     return (
       <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
         <DialogTrigger asChild>
-          {/* TODO: Fix on click */}
           <Button
             {...props}
             onClick={() => {
@@ -88,7 +87,7 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
             className={className}
             variant={variant ? variant : 'outline'}
           >
-            {!session ? `Log in` : `Dashboard`}
+            Log in
           </Button>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
@@ -106,7 +105,6 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   return (
     <Drawer open={open} onOpenChange={setOpenLogin}>
       <DrawerTrigger asChild>
-        {/* TODO: Fix on click */}
         <Button
           {...props}
           className={className}
@@ -118,7 +116,7 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
           }}
           variant={variant ? variant : 'outline'}
         >
-          {!session ? `Log in` : `Dashboard`}
+          Log in
         </Button>
       </DrawerTrigger>
       <DrawerContent>

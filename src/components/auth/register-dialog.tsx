@@ -41,7 +41,7 @@ function RegisterDrawerDialog({ children, className, variant, ...props }: Regist
             className={className}
             variant={variant ? variant : 'outline'}
           >
-            {children}
+            register
           </Button>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
@@ -67,7 +67,7 @@ function RegisterDrawerDialog({ children, className, variant, ...props }: Regist
           className={className}
           variant={variant ? variant : 'outline'}
         >
-          {children}
+          register
         </Button>
       </DrawerTrigger>
       <DrawerContent>

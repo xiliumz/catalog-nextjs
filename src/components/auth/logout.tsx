@@ -5,10 +5,13 @@ import Cookies from 'js-cookie';
 import { redirect, useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
 import { HOST } from '@/lib/global-var';
+import { useAppDispatch } from '@/hooks/store-hooks';
+import { delSession } from '@/features/userSlice';
 
 function Logout() {
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
 
   const onClick = () => {
     const token = Cookies.get('session');
@@ -21,8 +24,9 @@ function Logout() {
       redirect: 'follow',
     })
       .then((response) => {
-        router.push('/');
         Cookies.remove('session');
+        dispatch(delSession());
+        router.push('/');
       })
       .catch((error) => {
         toast({
