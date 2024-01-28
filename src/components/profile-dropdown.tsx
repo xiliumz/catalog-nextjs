@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
 import { CircleUser } from 'lucide-react';
+import Logout from './auth/logout';
 
 export default function ProfileDropdown() {
   return (
@@ -22,9 +23,7 @@ export default function ProfileDropdown() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <Logout />
       </DropdownMenuContent>
     </DropdownMenu>
   );

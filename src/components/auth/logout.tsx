@@ -7,6 +7,7 @@ import { useToast } from '../ui/use-toast';
 import { HOST } from '@/lib/global-var';
 import { useAppDispatch } from '@/hooks/store-hooks';
 import { delSession } from '@/features/userSlice';
+import { DropdownMenuItem } from '../ui/dropdown-menu';
 
 function Logout() {
   const router = useRouter();
@@ -38,9 +39,9 @@ function Logout() {
   };
 
   return (
-    <Button variant='ghost' size='sm' onClick={onClick}>
+    <DropdownMenuItem className='text-destructive font-semibold' onClick={onClick}>
       Log out
-    </Button>
+    </DropdownMenuItem>
   );
 }
 
