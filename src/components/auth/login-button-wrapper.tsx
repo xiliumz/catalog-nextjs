@@ -1,7 +1,7 @@
 'use client';
 import { useAppSelector } from '@/hooks/store-hooks';
 import React from 'react';
-import { LoginDrawerDialog } from './login-dialog';
+import { LoginDrawerDialog } from './login';
 import DashboardButton from '../home/dashboard-button';
 
 function LogginButtonWrapper() {

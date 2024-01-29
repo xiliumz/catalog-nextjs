@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import { TypographySmall } from '../ui/typhography';
-import RegisterDrawerDialog from '../auth/register-dialog';
-import { LoginDrawerDialog } from '../auth/login-dialog';
+import RegisterDrawerDialog from '../auth/register';
+import { LoginDrawerDialog } from '../auth/login';
 import { useAppSelector } from '@/hooks/store-hooks';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';

@@ -1,5 +1,5 @@
 import LogginButtonWrapper from '@/components/auth/login-button-wrapper';
-import { LoginDrawerDialog } from '@/components/auth/login-dialog';
+import { LoginDrawerDialog } from '@/components/auth/login';
 import RegisterDrawerDialog from '@/components/auth/register-dialog';
 import { WaveBackground } from '@/components/background';
 import FooterHome from '@/components/home/footer';
