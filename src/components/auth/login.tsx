@@ -25,7 +25,8 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import Google from '../ui/google';
 import { useToast } from '../ui/use-toast';
-import { RegisterForm } from './register-dialog';
+import { RegisterForm } from './register';
+import { jwtDecode } from 'jwt-decode';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -172,9 +173,17 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       })
       .then((result: any) => {
         const token = result.data.token;
-        Cookies.set('session', token);
-        dispatch(setSession(token));
-        router.push('/dashboard');
+        const decoded = jwtDecode(token);
+        const exp = Math.ceil(((decoded.exp as number) - (decoded.iat as number)) / (3600 * 24));
+        if (exp) {
+          Cookies.set('session', token, {
+            expires: exp,
+            sameSite: 'Strict',
+            secure: true,
+          });
+          dispatch(setSession(token));
+          router.push('/dashboard');
+        }
       })
       .catch((error) => {
         if (error instanceof Error) {

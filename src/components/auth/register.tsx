@@ -12,7 +12,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
-import { LoginForm } from './login-dialog';
+import { LoginForm } from './login';
 
 interface RegisterProps extends ButtonProps {}
 
