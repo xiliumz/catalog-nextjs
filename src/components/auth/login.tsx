@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { setSession, setUser } from '@/features/userSlice';
+import { delSession, setSession, setUser } from '@/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { HOST } from '@/lib/global-var';
@@ -46,23 +46,36 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
       var myHeaders = new Headers();
       myHeaders.append('Authorization', token);
 
-      fetch(`${HOST}/users/current`, {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow',
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          const data = result.data;
-          dispatch(setUser(data));
-        })
-        .catch((error) => {
-          toast({
-            variant: 'destructive',
-            title: 'Uh oh! Something went wrong.',
-            description: error.message,
+      const getUser = async () => {
+        try {
+          const response = await fetch(`${HOST}/users/current`, {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow',
           });
-        });
+          const result = await response.json();
+          const data = result.data;
+
+          if (response.status >= 400) {
+            throw new Error(data.errors);
+          }
+
+          dispatch(setUser(data));
+        } catch (error) {
+          if (error instanceof Error) {
+            Cookies.remove('session');
+            dispatch(delSession());
+            toast({
+              variant: 'destructive',
+              title: 'Uh oh! Something went wrong.',
+              description: error.message,
+            });
+          }
+        }
+      };
+
+      // Call the getUser function anywhere in your code
+      getUser();
     }
 
     addCustomListener(LOGIN_EVENT, () => {

@@ -1,7 +1,20 @@
 'use client';
-import React from 'react';
+import { cn } from '@/lib/utils';
+import React, { HTMLAttributes } from 'react';
+import { Card, CardContent, CardHeader } from '../ui/card';
 
-// TODO: Create catalog container
-export default function CatalogContainer() {
-  return <div>CatalogContainer</div>;
+export default function CatalogContainer({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  if (children) {
+    return (
+      <div {...props} className={cn('w-full grid sm:grid-cols-2 gap-5 lg:gap-x-10', className)}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <Card className='flex-grow flex flex-col'>
+      <CardHeader></CardHeader>
+      <CardContent className='flex-grow flex justify-center items-center'>You don't have any catalogs</CardContent>
+    </Card>
+  );
 }
