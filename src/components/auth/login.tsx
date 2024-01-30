@@ -27,6 +27,7 @@ import Google from '../ui/google';
 import { useToast } from '../ui/use-toast';
 import { RegisterForm } from './register';
 import { jwtDecode } from 'jwt-decode';
+import Link from 'next/link';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -175,20 +176,27 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       password: values.password,
     });
 
-    fetch(`${HOST}/users/login`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    })
-      .then((response) => {
-        if (response.status >= 500) throw new Error('Internal server error, please contact admin');
-        return response.json();
-      })
-      .then((result: any) => {
+    (async () => {
+      try {
+        const response = await fetch(`${HOST}/users/login`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow',
+        });
+        const result = await response.json();
+
+        if (response.status >= 500) {
+          throw new Error('Internal server error, please contact admin');
+        }
+        if (response.status >= 400) {
+          throw new Error(result.errors);
+        }
+
         const token = result.data.token;
         const decoded = jwtDecode(token);
         const exp = Math.ceil(((decoded.exp as number) - (decoded.iat as number)) / (3600 * 24));
+
         if (exp) {
           Cookies.set('session', token, {
             expires: exp,
@@ -198,8 +206,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           dispatch(setSession(token));
           router.push('/dashboard');
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         if (error instanceof Error) {
           toast({
             variant: 'destructive',
@@ -207,7 +214,8 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             description: error.message,
           });
         }
-      });
+      }
+    })();
   }
 
   return (
@@ -225,7 +233,13 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your email' type='email' {...field} />
+                  <Input
+                    className='text-base py-6'
+                    placeholder='Enter your email'
+                    type='email'
+                    data-test='email-input'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -239,13 +253,19 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your password' type='password' {...field} />
+                  <Input
+                    className='text-base py-6'
+                    placeholder='Enter your password'
+                    type='password'
+                    data-test='password-input'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className='w-full' type='submit'>
+          <Button className='w-full' type='submit' data-test='submit-login'>
             Log in
           </Button>
         </form>

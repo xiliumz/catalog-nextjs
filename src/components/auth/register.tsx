@@ -123,6 +123,9 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
         redirect: 'follow',
       });
       const resJson = await res.json();
+      if (res.status >= 500) {
+        throw new Error('Internal server error, please contact admin');
+      }
       if (!res.ok) throw new Error(resJson.errors);
       toast({
         description: 'Registration successful. Please log in.',

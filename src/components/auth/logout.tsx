@@ -39,7 +39,7 @@ function Logout() {
   };
 
   return (
-    <DropdownMenuItem className='text-destructive font-semibold' onClick={onClick}>
+    <DropdownMenuItem className='text-destructive font-semibold' onClick={onClick} data-test='logout'>
       Log out
     </DropdownMenuItem>
   );
