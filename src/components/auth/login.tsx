@@ -217,7 +217,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       </Button>
       <DialogDescription className='text-center mt-6 mb-2'>Or</DialogDescription>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form data-test='login-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
             control={form.control}
             name='email'
@@ -258,6 +258,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             setIsLogin(false);
           }}
           variant='link'
+          data-test='register-button-login'
         >
           Create one
         </Button>

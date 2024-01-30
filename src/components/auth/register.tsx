@@ -142,7 +142,7 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form data-test='register-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
             control={form.control}
             name='username'
@@ -197,6 +197,7 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
           onClick={() => {
             setIsLogin(true);
           }}
+          data-test='login-button-register'
         >
           Log in
         </Button>
