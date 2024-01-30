@@ -40,6 +40,7 @@ function RegisterDrawerDialog({ children, className, variant, ...props }: Regist
             }}
             className={className}
             variant={variant ? variant : 'outline'}
+            data-test='register-button-footer'
           >
             register
           </Button>

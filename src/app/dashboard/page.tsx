@@ -29,7 +29,6 @@ function Dashboard() {
               <Plus size={16} opacity={1} className='mr-1' /> Create
             </Button>
           </div>
-          {/* TODO: fix responsive problem */}
           <CatalogContainer>
             <CatalogCard
               title='Lorem ipsum dolor sit amet consectetur.'

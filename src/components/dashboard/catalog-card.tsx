@@ -11,11 +11,11 @@ interface catalogCardProps {
 function CatalogCard({ title, desc }: catalogCardProps) {
   return (
     <Card className='flex items-center justify-between w-full'>
-      <CardHeader className='w-2/3'>
-        <CardTitle>{title}</CardTitle>
+      <CardHeader className='flex-grow w-2/3'>
+        <CardTitle className='truncate'>{title}</CardTitle>
         <CardDescription className='truncate'>{desc}</CardDescription>
       </CardHeader>
-      <CardFooter className='py-0'>
+      <CardFooter className='py-0 px-0 sm:px-6'>
         <Button variant={'secondary'} size='icon'>
           <Pencil size={20} />
         </Button>

@@ -100,11 +100,12 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
             }}
             className={className}
             variant={variant ? variant : 'outline'}
+            data-test='login-button'
           >
             Log in
           </Button>
         </DialogTrigger>
-        <DialogContent className='sm:max-w-[425px]'>
+        <DialogContent data-test='login-dialog' className='sm:max-w-[425px]'>
           <div className='px-3 py-6'>
             <DialogHeader className='mb-10 text-muted-foreground'>
               <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>

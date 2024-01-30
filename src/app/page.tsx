@@ -1,6 +1,4 @@
 import LogginButtonWrapper from '@/components/auth/login-button-wrapper';
-import { LoginDrawerDialog } from '@/components/auth/login';
-import RegisterDrawerDialog from '@/components/auth/register-dialog';
 import { WaveBackground } from '@/components/background';
 import FooterHome from '@/components/home/footer';
 import SearchCatalog from '@/components/home/search-catalog';
@@ -8,7 +6,6 @@ import NavigationBar from '@/components/navigation-bar';
 import { ModeToggle } from '@/components/toggle-theme';
 import Container from '@/components/ui/container';
 import { Toaster } from '@/components/ui/toaster';
-import { TypographySmall } from '@/components/ui/typhography';
 
 export default function Home() {
   return (

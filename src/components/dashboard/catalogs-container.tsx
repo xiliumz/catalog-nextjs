@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from '../ui/card';
 export default function CatalogContainer({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
   if (children) {
     return (
-      <div {...props} className={cn('w-full grid sm:grid-cols-2 gap-5 lg:gap-x-10', className)}>
+      <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
         {children}
       </div>
     );
