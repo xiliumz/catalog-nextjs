@@ -241,7 +241,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage data-test='form-message' />
               </FormItem>
             )}
           />

@@ -97,4 +97,14 @@ describe.only('login test', () => {
     cy.wait(1000);
     getDataTest('toaster').should('have.text', 'Invalid email or password');
   });
+
+  it('should invalid empty wrong', () => {
+    // Open login dialog
+    cy.getDataTest('login-button').eq(0).click();
+    cy.getDataTest('login-form').should('exist');
+    // submit
+    cy.getDataTest('submit-login').click();
+    cy.wait(1000);
+    getDataTest('form-message').should('exist');
+  });
 });
