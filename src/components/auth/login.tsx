@@ -157,6 +157,10 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
   const router = useRouter();
   const { toast } = useToast();
 
+  React.useEffect(() => {
+    router.prefetch('/dashboard');
+  }, []);
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),

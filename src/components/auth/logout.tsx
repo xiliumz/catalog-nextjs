@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
 import Cookies from 'js-cookie';
 import { redirect, useRouter } from 'next/navigation';
@@ -13,6 +13,10 @@ function Logout() {
   const router = useRouter();
   const { toast } = useToast();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    router.prefetch('/');
+  }, []);
 
   const onClick = () => {
     const token = Cookies.get('session');

@@ -5,16 +5,16 @@ import NavigationBar from '@/components/navigation-bar';
 import ProfileDropdown from '@/components/profile-dropdown';
 import { ModeToggle } from '@/components/toggle-theme';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Container from '@/components/ui/container';
 import EmptySpace from '@/components/ui/empty-space';
+import FullScreen from '@/components/ui/full-screen';
 import { Plus } from 'lucide-react';
 
 function Dashboard() {
   return (
     <>
       <PolyBackground />
-      <div className='flex flex-col min-h-screen'>
+      <FullScreen>
         <NavigationBar>
           <div className='flex justify-center items-center lg:mr-3'>
             <ModeToggle />
@@ -44,7 +44,7 @@ function Dashboard() {
             />
           </CatalogContainer>
         </Container>
-      </div>
+      </FullScreen>
     </>
   );
 }
