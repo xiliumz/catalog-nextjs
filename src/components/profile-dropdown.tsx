@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,10 +6,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from './ui/button';
 import { CircleUser } from 'lucide-react';
-import Logout from './auth/logout';
 import Link from 'next/link';
+import Logout from './auth/logout';
+import { Button } from './ui/button';
 
 export default function ProfileDropdown() {
   return (
@@ -23,9 +22,9 @@ export default function ProfileDropdown() {
       <DropdownMenuContent data-test='profile-dropdown-content' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href='/profile'>Profile</Link>
-        </DropdownMenuItem>
+        <Link href='/profile'>
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+        </Link>
         <Logout />
       </DropdownMenuContent>
     </DropdownMenu>

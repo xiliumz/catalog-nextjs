@@ -58,7 +58,7 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
           const data = result.data;
 
           if (response.status >= 400) {
-            throw new Error(data.errors);
+            throw new Error(result.errors ? result.errors : response.statusText);
           }
 
           dispatch(setUser(data));
@@ -157,10 +157,6 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
   const router = useRouter();
   const { toast } = useToast();
 
-  React.useEffect(() => {
-    router.prefetch('/dashboard');
-  }, []);
-
   // 1. Define your form.
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -180,7 +176,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       password: values.password,
     });
 
-    (async () => {
+    const login = async () => {
       try {
         const response = await fetch(`${HOST}/users/login`, {
           method: 'POST',
@@ -194,22 +190,20 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           throw new Error('Internal server error, please contact admin');
         }
         if (response.status >= 400) {
-          throw new Error(result.errors);
+          throw new Error(result.errors ? result.errors : response.statusText);
         }
 
         const token = result.data.token;
         const decoded = jwtDecode(token);
         const exp = Math.ceil(((decoded.exp as number) - (decoded.iat as number)) / (3600 * 24));
 
-        if (exp) {
-          Cookies.set('session', token, {
-            expires: exp,
-            sameSite: 'Strict',
-            secure: true,
-          });
-          dispatch(setSession(token));
-          router.push('/dashboard');
-        }
+        Cookies.set('session', token, {
+          expires: exp ? exp : 7,
+          sameSite: 'Strict',
+          secure: true,
+        });
+        dispatch(setSession(token));
+        router.push('/dashboard');
       } catch (error) {
         if (error instanceof Error) {
           toast({
@@ -219,7 +213,8 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           });
         }
       }
-    })();
+    };
+    login();
   }
 
   return (
