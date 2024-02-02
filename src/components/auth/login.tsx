@@ -19,6 +19,7 @@ import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -26,8 +27,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import Google from '../ui/google';
 import { useToast } from '../ui/use-toast';
 import { RegisterForm } from './register';
-import { jwtDecode } from 'jwt-decode';
-import Link from 'next/link';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -202,10 +201,12 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           sameSite: 'Strict',
           secure: true,
         });
-        dispatch(setSession(token));
         router.push('/dashboard');
+        dispatch(setSession(token));
       } catch (error) {
         if (error instanceof Error) {
+          Cookies.remove('session');
+          dispatch(delSession());
           toast({
             variant: 'destructive',
             title: 'Uh oh! Something went wrong.',

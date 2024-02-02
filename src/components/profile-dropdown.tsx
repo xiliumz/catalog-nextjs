@@ -13,14 +13,16 @@ import { Button } from './ui/button';
 
 export default function ProfileDropdown() {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='sm' data-test='profile-dropdown'>
+          {/* TODO: change with user's username */}
           Profile <CircleUser className='ml-2 antialiased' strokeWidth={1.5} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent data-test='profile-dropdown-content' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        {/* TODO: add dashboard */}
         <DropdownMenuSeparator />
         <Link href='/profile'>
           <DropdownMenuItem>Profile</DropdownMenuItem>
