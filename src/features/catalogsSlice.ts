@@ -7,8 +7,15 @@ export interface catalogProps {
   img?: string;
 }
 
+export interface catalogContainerProps {
+  id: string;
+  title: string;
+  desc?: string;
+  catalogs: catalogProps[];
+}
+
 interface initialStateProps {
-  catalogs?: catalogProps[];
+  catalogs?: catalogContainerProps[];
 }
 
 const initialState: initialStateProps = {
@@ -19,18 +26,16 @@ export const catalogsSlice = createSlice({
   name: 'catalogs',
   initialState,
   reducers: {
-    addCatalog: (state, action: PayloadAction<catalogProps>) => {
+    addCatalog: (state, action: PayloadAction<catalogContainerProps>) => {
       state.catalogs?.push(action.payload);
     },
     removeCatalog: (state, action: PayloadAction<string>) => {
-      state.catalogs = state.catalogs?.filter((catalog) => {
-        return catalog.id !== action.payload;
+      state.catalogs = state.catalogs?.filter((catalogContainer) => {
+        return catalogContainer.id !== action.payload;
       });
     },
-    editCatalog: (state, action: PayloadAction<catalogProps>) => {
-      state.catalogs = state.catalogs?.map((catalog) => {
-        return catalog.id === action.payload.id ? action.payload : catalog;
-      });
+    editCatalog: (state, action: PayloadAction<Omit<catalogContainerProps, 'catalogs'>>) => {
+      const id = action.payload.id;
     },
   },
 });

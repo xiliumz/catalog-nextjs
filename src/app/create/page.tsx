@@ -19,7 +19,7 @@ export default function CreateCatalog() {
           </div>
         </NavigationBar>
         <Container className='flex py-5' size='lg'>
-          <Card className='flex-grow'>
+          <Card className='flex-grow border-2'>
             <CardHeader>
               <CardTitle>Create Catalog</CardTitle>
             </CardHeader>
