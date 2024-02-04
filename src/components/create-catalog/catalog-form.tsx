@@ -1,14 +1,14 @@
 'use client';
-import React, { HTMLAttributes, useState } from 'react';
-import { CardContent, CardFooter } from '../ui/card';
+import { Plus } from 'lucide-react';
+import { HTMLAttributes, useState } from 'react';
+import { FieldValues, UseFieldArrayRemove, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { FieldValues, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '../ui/button';
+import { CardContent, CardFooter } from '../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
-import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { Plus } from 'lucide-react';
+import { catalogProps } from '@/features/catalogsSlice';
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
@@ -19,7 +19,7 @@ const formSchema = z.object({
 export interface FormData extends FieldValues {
   title: string;
   description: string;
-  items: Omit<catalogItemProps, 'index' | 'register'>[];
+  items: Omit<catalogProps, 'id'>[];
 }
 
 export default function CatalogForm() {
@@ -61,6 +61,7 @@ export default function CatalogForm() {
   function onSubmit(values: any) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    // TODO: make sure create validation
     console.log(values);
     console.log(values.items[0].img);
   }
@@ -104,7 +105,7 @@ export default function CatalogForm() {
               <FormLabel className='mb-5'>Create Catalog's items</FormLabel>
               <div className='grid gap-4 md:grid-cols-3 sm:grid-cols-2 mb-2'>
                 {items.fields.map((field, index) => (
-                  <CatalogItem key={field.id} index={index} register={form.register} />
+                  <CatalogItem key={field.id} index={index} register={form.register} remove={items.remove} />
                 ))}
                 <AddItem
                   onClick={() => {
@@ -144,12 +145,10 @@ export function AddItem({ ...props }: HTMLAttributes<HTMLDivElement>) {
 export interface catalogItemProps {
   index: number;
   register: UseFormRegister<FormData>;
-  title?: string;
-  desc?: string;
-  img?: any;
+  remove: UseFieldArrayRemove;
 }
 
-export function CatalogItem({ index, register }: catalogItemProps) {
+export function CatalogItem({ index, register, remove }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
 
   return (
@@ -200,6 +199,9 @@ export function CatalogItem({ index, register }: catalogItemProps) {
         size={'sm'}
         variant={'ghost'}
         type='button'
+        onClick={() => {
+          remove(index);
+        }}
         className='text-destructive/80 font-semibold hover:text-destructive hover:font-bold'
       >
         DELETE
