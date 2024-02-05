@@ -17,3 +17,14 @@ export function emitEvent<T>(eventName: string, data?: T) {
   const event = new CustomEvent(eventName, { detail: data });
   document.dispatchEvent(event);
 }
+
+export function renameFile(originalFile: File, newName: string) {
+  return new File([originalFile], newName, {
+    type: originalFile.type,
+    lastModified: originalFile.lastModified,
+  });
+}
+
+export function getFileExt(filename: string) {
+  return filename.split('.').pop();
+}

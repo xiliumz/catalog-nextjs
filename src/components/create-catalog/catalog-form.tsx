@@ -2,48 +2,31 @@
 import { Plus } from 'lucide-react';
 import { HTMLAttributes, useState } from 'react';
 import { FieldValues, UseFieldArrayRemove, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { catalogProps } from '@/features/catalogsSlice';
+import Cookies from 'js-cookie';
+import { HOST } from '@/lib/global-var';
+import { useToast } from '../ui/use-toast';
+import { getFileExt, renameFile } from '@/lib/utils';
 
-const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  description: z.string().max(50).optional(),
-  itemTitle: z.string(),
-});
+interface itemProps extends Omit<catalogProps, 'id' | 'img'> {
+  id: number;
+  img?: FileList;
+}
 
 export interface FormData extends FieldValues {
   title: string;
-  description: string;
-  items: Omit<catalogProps, 'id'>[];
+  description?: string;
+  items: itemProps[];
 }
 
 export default function CatalogForm() {
   // 1. Define your form.
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {
-  //     title: '',
-  //     description: '',
-  //   },
-  // });
-  // const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
-  //   control: form.control, // control props comes from useForm (optional: if you are using FormContext)
-  //   name: 'itemTitle', // unique name for your Field Array
-  // });
-
-  // // 2. Define a submit handler.
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   // Do something with the form values.
-  //   // ✅ This will be type-safe and validated.
-  //   console.log(values);
-  // }
-
-  // 1. Define your form.
+  const { toast } = useToast();
   const form = useForm<FormData>({
     defaultValues: {
       title: '',
@@ -58,12 +41,58 @@ export default function CatalogForm() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: any) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: FormData) {
     // TODO: make sure create validation
-    console.log(values);
-    console.log(values.items[0].img);
+    const formData = new FormData();
+    const isItemsExists = values.items.length > 0;
+    const token = Cookies.get('session');
+
+    const myHeader = new Headers();
+
+    if (token) myHeader.append('Authorization', token);
+    formData.append('title', values.title);
+    if (values.description) formData.append('desc', values.description);
+    if (isItemsExists) {
+      formData.append(
+        'items',
+        JSON.stringify(
+          values.items.map((item) => {
+            const image = item.img?.item(0);
+            if (image) {
+              const ext = getFileExt(image.name);
+              formData.append('images', image, `${item.id}.${ext}`);
+            }
+            return { id: item.id, title: item.title, desc: item.desc };
+          })
+        )
+      );
+    }
+
+    try {
+      const response = await fetch(`${HOST}/catalog/create`, {
+        method: 'POST',
+        headers: myHeader,
+        body: formData,
+        redirect: 'follow',
+      });
+      const result = await response.json();
+      console.log(result);
+
+      if (response.status >= 500) {
+        throw new Error('Internal server error, please contact admin');
+      }
+      if (!response.ok) {
+        throw new Error(result.errors ? result.errors : response.statusText);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: error.message,
+        });
+      }
+    }
   }
 
   return (
@@ -109,7 +138,7 @@ export default function CatalogForm() {
                 ))}
                 <AddItem
                   onClick={() => {
-                    items.append({ title: '', desc: '' });
+                    items.append({ title: '', desc: '', id: +new Date() });
                   }}
                 />
               </div>

@@ -6,6 +6,7 @@ import { ModeToggle } from '@/components/toggle-theme';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import Container from '@/components/ui/container';
 import FullScreen from '@/components/ui/full-screen';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function CreateCatalog() {
   return (
@@ -26,6 +27,7 @@ export default function CreateCatalog() {
             <CatalogForm />
           </Card>
         </Container>
+        <Toaster />
       </FullScreen>
     </>
   );

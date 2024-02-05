@@ -1,13 +1,12 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Button } from '../ui/button';
-import Cookies from 'js-cookie';
-import { redirect, useRouter } from 'next/navigation';
-import { useToast } from '../ui/use-toast';
-import { HOST } from '@/lib/global-var';
-import { useAppDispatch } from '@/hooks/store-hooks';
 import { delSession } from '@/features/userSlice';
+import { useAppDispatch } from '@/hooks/store-hooks';
+import { HOST } from '@/lib/global-var';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
+import { useToast } from '../ui/use-toast';
 
 function Logout() {
   const router = useRouter();
