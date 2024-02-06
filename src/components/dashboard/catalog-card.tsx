@@ -4,11 +4,12 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/
 import CatalogMoreButton from './catalog-more-button';
 
 interface catalogCardProps {
+  id: string;
   title: string;
   desc?: string;
 }
 
-function CatalogCard({ title, desc }: catalogCardProps) {
+function CatalogCard({ id, title, desc }: catalogCardProps) {
   return (
     <Card className='flex items-center justify-between w-full'>
       <CardHeader className='flex-grow w-2/3'>

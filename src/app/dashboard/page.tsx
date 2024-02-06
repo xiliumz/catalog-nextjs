@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Container from '@/components/ui/container';
 import EmptySpace from '@/components/ui/empty-space';
 import FullScreen from '@/components/ui/full-screen';
+import { Toaster } from '@/components/ui/toaster';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -33,21 +34,9 @@ function Dashboard() {
               </Button>
             </Link>
           </div>
-          <CatalogContainer>
-            <CatalogCard
-              title='Lorem ipsum dolor sit amet consectetur.'
-              desc='Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi blanditiis minima explicabo quae laboriosam delectus voluptas cumque quas beatae ducimus!'
-            />
-            <CatalogCard
-              title='Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, facilis!'
-              desc='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nesciunt aut qui officia, autem molestiae asperiores ipsa laudantium nisi error nulla. Aspernatur hic animi laboriosam? Fugit eos iusto explicabo animi nisi.'
-            />
-            <CatalogCard
-              title='Catalog 1'
-              desc='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis, adipisci. Expedita voluptatem tempore quia vel, alias totam quidem esse hic molestias at, quas similique. Quo officiis laudantium fugiat aliquam voluptatibus.'
-            />
-          </CatalogContainer>
+          <CatalogContainer />
         </Container>
+        <Toaster />
       </FullScreen>
     </>
   );

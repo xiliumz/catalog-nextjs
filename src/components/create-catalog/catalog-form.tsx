@@ -12,6 +12,7 @@ import Cookies from 'js-cookie';
 import { HOST } from '@/lib/global-var';
 import { useToast } from '../ui/use-toast';
 import { getFileExt, renameFile } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface itemProps extends Omit<catalogProps, 'id' | 'img'> {
   id: number;
@@ -27,6 +28,8 @@ export interface FormData extends FieldValues {
 export default function CatalogForm() {
   // 1. Define your form.
   const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<FormData>({
     defaultValues: {
       title: '',
@@ -62,7 +65,7 @@ export default function CatalogForm() {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
             }
-            return { id: item.id, title: item.title, desc: item.desc };
+            return { id: item.id.toString(), title: item.title, desc: item.desc };
           })
         )
       );
@@ -76,7 +79,6 @@ export default function CatalogForm() {
         redirect: 'follow',
       });
       const result = await response.json();
-      console.log(result);
 
       if (response.status >= 500) {
         throw new Error('Internal server error, please contact admin');
@@ -84,6 +86,7 @@ export default function CatalogForm() {
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
+      router.push('/dashboard');
     } catch (error) {
       if (error instanceof Error) {
         toast({
