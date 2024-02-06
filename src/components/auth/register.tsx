@@ -153,7 +153,13 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your username' type='text' {...field} />
+                  <Input
+                    data-test='input-username-register'
+                    className='text-base py-6'
+                    placeholder='Enter your username'
+                    type='text'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -167,7 +173,13 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your email' type='email' {...field} />
+                  <Input
+                    data-test='input-email-register'
+                    className='text-base py-6'
+                    placeholder='Enter your email'
+                    type='email'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -181,13 +193,19 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your password' type='password' {...field} />
+                  <Input
+                    data-test='input-password-register'
+                    className='text-base py-6'
+                    placeholder='Enter your password'
+                    type='password'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className='w-full' type='submit'>
+          <Button data-test='submit-button-register' className='w-full' type='submit'>
             Create account
           </Button>
         </form>
