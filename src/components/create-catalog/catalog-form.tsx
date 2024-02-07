@@ -7,12 +7,12 @@ import { CardContent, CardFooter } from '../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { catalogProps } from '@/features/catalogsSlice';
 import Cookies from 'js-cookie';
 import { HOST } from '@/lib/global-var';
 import { useToast } from '../ui/use-toast';
 import { getFileExt, renameFile } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { catalogProps } from '../dashboard/catalogs-container';
 
 interface itemProps extends Omit<catalogProps, 'id' | 'img'> {
   id: number;
@@ -64,6 +64,7 @@ export default function CatalogForm() {
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
+              console.log(item.id);
             }
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })

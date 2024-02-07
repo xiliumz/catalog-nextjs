@@ -10,16 +10,21 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 
-export default function CatalogMoreButton() {
+export interface catalogMoreButtonProps {
+  onDelete: () => void;
+}
+
+export default function CatalogMoreButton({ onDelete }: catalogMoreButtonProps) {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button size={'icon'} variant={'ghost'}>
+        <Button className='ml-2' size={'icon'} variant={'outline'}>
           <MoreHorizontal size={20} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side='top' align='start' alignOffset={-3} sideOffset={-2}>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+      <DropdownMenuContent side='top' align='end' alignOffset={-15} sideOffset={10}>
+        <DropdownMenuItem>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -28,12 +28,10 @@ export default function CustomLink({
     if (cookie) {
       const cook = Cookies.get(cookie);
       if (cook) router.prefetch(href);
-      console.log('custom-link: cookie');
       return;
     }
 
     router.prefetch(href);
-    console.log('custom-link');
   }, []);
 
   const clickHandler = (e: MouseEvent<HTMLButtonElement, _MouseEvent>) => {

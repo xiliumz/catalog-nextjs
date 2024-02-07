@@ -10,8 +10,8 @@ describe('login test', () => {
     cy.getDataTest('login-button').eq(0).click();
     cy.getDataTest('login-form').should('exist');
     // input form
-    cy.getDataTest('email-input').type('test1234567890@gmail.com');
-    cy.getDataTest('password-input').type('passowrdtest1234567890');
+    cy.getDataTest('email-input').type('qwe@qwe.com');
+    cy.getDataTest('password-input').type('qweqwe');
     // submit
     cy.getDataTest('submit-login').click();
     cy.wait(1000);

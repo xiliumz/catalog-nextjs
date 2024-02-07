@@ -30,6 +30,41 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[]>([]);
   const { toast } = useToast();
 
+  const onDelete = async (id: string) => {
+    const token = Cookies.get('session');
+    const myHeaders = new Headers();
+    if (token) myHeaders.append('Authorization', token);
+
+    try {
+      const response = await fetch(`${HOST}/catalog/delete/${id}`, {
+        method: 'DELETE',
+        headers: myHeaders,
+        redirect: 'follow',
+      });
+      const result = await response.json();
+
+      if (response.status >= 500) {
+        throw new Error('Internal server error, please contact admin');
+      }
+      if (!response.ok) {
+        throw new Error(result.errors ? result.errors : response.statusText);
+      }
+      console.log(result);
+      setCatalog((val) => {
+        const newCatalog = val.flatMap((item) => (item.id == id ? [] : item));
+        return newCatalog;
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: e.message,
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     const token = Cookies.get('session');
     const username = jwtDecode<sessionProps>(token as string);
@@ -73,7 +108,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     return (
       <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
         {catalog.map((val) => {
-          return <CatalogCard id={val.id} title={val.title} desc={val.desc} key={val.id} />;
+          return <CatalogCard onDelete={onDelete} id={val.id} title={val.title} desc={val.desc} key={val.id} />;
         })}
       </div>
     );
