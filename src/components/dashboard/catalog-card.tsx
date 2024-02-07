@@ -17,7 +17,9 @@ function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardP
   return (
     <Card data-test='catalog-card' className='flex items-center justify-between w-full'>
       <CardHeader className='flex-grow w-2/3'>
-        <CardTitle className='truncate'>{title}</CardTitle>
+        <CardTitle data-test='catalog-title-card' className='truncate'>
+          {title}
+        </CardTitle>
         <CardDescription className='truncate'>{desc}</CardDescription>
       </CardHeader>
       <CardFooter className='py-0 px-0  sm:px-4'>

@@ -121,6 +121,3 @@ describe('create catalog', () => {
     cy.location('pathname').should('equal', '/dashboard');
   });
 });
-
-// TODO: create this test
-describe.skip('check created catalog ui in dashboard', () => {});

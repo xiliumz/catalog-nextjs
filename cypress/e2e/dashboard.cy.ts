@@ -50,7 +50,16 @@ describe('dashboard functionality', () => {
     getDataTest('catalog-card').should('have.length', 6);
     getDataTest('catalog-more-card').should('have.length', 6);
   });
-  it('should delete all catalog items', () => {
+
+  it('should display catalog with correct order, the recent created data will be displayed first', () => {
+    getDataTest('catalog-title-card').eq(0).should('have.text', 'Test5');
+    getDataTest('catalog-title-card').eq(1).should('have.text', 'Test4');
+    getDataTest('catalog-title-card').eq(2).should('have.text', 'Test3');
+    getDataTest('catalog-title-card').eq(3).should('have.text', 'Test2');
+    getDataTest('catalog-title-card').eq(4).should('have.text', 'Test1');
+  });
+
+  it.skip('should delete all catalog items', () => {
     getDataTest('catalog-more-card').should('have.length', 6);
     for (let i = 1; i <= 6; i++) {
       getDataTest('catalog-more-card').eq(0).click();

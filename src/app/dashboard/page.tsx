@@ -15,7 +15,6 @@ import Link from 'next/link';
 function Dashboard() {
   return (
     <>
-      {/* TODO: change background */}
       <PolyBackground />
       <FullScreen>
         <NavigationBar>
