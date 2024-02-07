@@ -26,6 +26,7 @@ function FooterHome() {
           onClick={() => {
             router.push('/dashboard');
           }}
+          data-test='dashboard-button-footer'
         >
           dashboard
         </Button>

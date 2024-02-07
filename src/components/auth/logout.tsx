@@ -1,5 +1,4 @@
 'use client';
-import { useAppDispatch } from '@/hooks/store-hooks';
 import { HOST } from '@/lib/global-var';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
@@ -10,7 +9,6 @@ import { useToast } from '../ui/use-toast';
 function Logout() {
   const router = useRouter();
   const { toast } = useToast();
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     router.prefetch('/');

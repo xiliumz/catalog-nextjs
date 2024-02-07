@@ -91,7 +91,7 @@ describe('create catalog', () => {
     cy.location('pathname').should('equal', '/dashboard');
   });
 
-  it.only('should create catalog with three items and images', () => {
+  it('should create catalog with three items and images', () => {
     // Catalog container
     getDataTest('container-title-input').type('Test5');
     getDataTest('container-desc-input').type(

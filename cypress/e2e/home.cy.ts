@@ -46,8 +46,27 @@ describe('auth ui functionality', () => {
   });
 });
 
-describe('auth home page functionality', () => {
+describe.only('auth home page functionality', () => {
   beforeEach(() => {
     cy.visit(`http://localhost:3000/`);
+  });
+  it('should login and display the correct homepage display', () => {
+    // Open login dialog
+    cy.getDataTest('login-button').eq(0).click();
+    cy.getDataTest('login-form').should('exist');
+    // input form
+    cy.getDataTest('email-input').type('test1234567890@gmail.com');
+    cy.getDataTest('password-input').type('passowrdtest1234567890');
+    // submit
+    cy.getDataTest('submit-login').click();
+    cy.wait(1000);
+    cy.location('pathname').should('equal', '/dashboard');
+    cy.visit(`http://localhost:3000/`);
+    // go to dashboard
+    cy.getDataTest('dashboard-button').click();
+    cy.location('pathname').should('equal', '/dashboard');
+    cy.visit(`http://localhost:3000/`);
+    cy.getDataTest('dashboard-button-footer').click();
+    cy.location('pathname').should('equal', '/dashboard');
   });
 });
