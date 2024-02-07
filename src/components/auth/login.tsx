@@ -33,12 +33,10 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   const [open, setOpenLogin] = React.useState(false);
   const [isLogin, setIsLogin] = React.useState(true);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const [session, setSession] = React.useState<string | undefined>('');
   const { toast } = useToast();
 
   React.useEffect(() => {
     const token = Cookies.get('session');
-    setSession(token);
     if (token) {
       var myHeaders = new Headers();
       myHeaders.append('Authorization', token);

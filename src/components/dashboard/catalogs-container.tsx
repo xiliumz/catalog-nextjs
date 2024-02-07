@@ -7,6 +7,7 @@ import { HTMLAttributes, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { useToast } from '../ui/use-toast';
 import CatalogCard from './catalog-card';
+import { useRouter } from 'next/navigation';
 
 export interface catalogProps {
   id: string;
@@ -24,11 +25,17 @@ export interface catalogContainerProps {
 
 export interface sessionProps extends JwtPayload {
   id: string;
+  email: string;
 }
 
 export default function CatalogContainer({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[]>([]);
   const { toast } = useToast();
+  const router = useRouter();
+
+  const onEdit = (id: string) => {
+    router.push(`/edit/${id}`);
+  };
 
   const onDelete = async (id: string) => {
     const token = Cookies.get('session');
@@ -108,7 +115,16 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     return (
       <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
         {catalog.map((val) => {
-          return <CatalogCard onDelete={onDelete} id={val.id} title={val.title} desc={val.desc} key={val.id} />;
+          return (
+            <CatalogCard
+              onEdit={onEdit}
+              onDelete={onDelete}
+              id={val.id}
+              title={val.title}
+              desc={val.desc}
+              key={val.id}
+            />
+          );
         })}
       </div>
     );
