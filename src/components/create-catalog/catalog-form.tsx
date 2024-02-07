@@ -110,7 +110,7 @@ export default function CatalogForm() {
                 <FormItem>
                   <FormLabel>Title*</FormLabel>
                   <FormControl>
-                    <Input required placeholder='Catalog 1' {...field} />
+                    <Input data-test='container-title-input' required placeholder='Catalog 1' {...field} />
                   </FormControl>
                   <FormDescription>This is your catalog's title.</FormDescription>
                   <FormMessage />
@@ -125,7 +125,7 @@ export default function CatalogForm() {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder='This is my catalog...' {...field} />
+                    <Textarea data-test='container-desc-input' placeholder='This is my catalog...' {...field} />
                   </FormControl>
                   <FormDescription>This is your catalog's description. It's optional.</FormDescription>
                   <FormMessage />
@@ -140,6 +140,7 @@ export default function CatalogForm() {
                   <CatalogItem key={field.id} index={index} register={form.register} remove={items.remove} />
                 ))}
                 <AddItem
+                  data-test='add-catalog-item-button'
                   onClick={() => {
                     items.append({ title: '', desc: '', id: +new Date() });
                   }}
@@ -149,6 +150,7 @@ export default function CatalogForm() {
           </CardContent>
           <CardFooter className='justify-end'>
             <input
+              data-test='create-submit-button'
               className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'
               type='submit'
               placeholder='Submit'
@@ -184,10 +186,14 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
 
   return (
-    <div className='border rounded flex flex-col justify-evenly items-center gap-2 min-h-40 py-5'>
+    <div
+      data-test='catalog-item'
+      className='border flex flex-col justify-evenly items-center gap-2 min-h-40 py-5 rounded-[var(--radius)]'
+    >
       <FormItem>
         <FormLabel htmlFor={`item-title${index}`}>Title</FormLabel>
         <Input
+          data-test='item-title-input'
           className='rounded-sm my-2'
           id={`item-title${index}`}
           placeholder='Title'
@@ -195,10 +201,13 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         />
       </FormItem>
 
+      {/* TODO: fix rezize so textarea can fit the remaining height */}
+      {/* TODO: fix textarea not align with the title */}
       <FormItem>
         <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
-        <Input
-          className='rounded-sm my-2'
+        <Textarea
+          data-test='item-desc-input'
+          className='my-2 resize-y'
           id={`item-value${index}`}
           placeholder='Description'
           {...register(`items.${index}.desc` as const, {})}
@@ -209,6 +218,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         <FormLabel
           className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground rounded mr-28'
           htmlFor={`item-img${index}`}
+          data-test='item-file-input'
         >
           Upload image
         </FormLabel>

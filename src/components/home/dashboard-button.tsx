@@ -19,6 +19,7 @@ function DashboardButton({ className, variant, ...props }: ButtonProps) {
         router.push('/dashboard');
       }}
       variant='ghost'
+      data-test='dashboard-button'
     >
       Dashboard
     </Button>

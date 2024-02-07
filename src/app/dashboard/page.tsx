@@ -28,7 +28,7 @@ function Dashboard() {
         <Container className='flex-grow flex gap-4 flex-col py-10'>
           <div className='flex w-full justify-between'>
             <h1 className='scroll-m-20 text-2xl font-extrabold tracking-tight lg:text-3xl'> dashboard</h1>
-            <Link href='/create'>
+            <Link data-test='create-catalog-button' href='/create'>
               <Button size='sm' className='font-semibold'>
                 <Plus size={16} opacity={1} className='mr-1' /> Create
               </Button>

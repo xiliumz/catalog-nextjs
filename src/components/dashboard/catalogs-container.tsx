@@ -55,6 +55,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     fetchCatalogData();
   }, []);
 
+  // TODO: fix the order where the most recent created will be displayed first
   if (catalog.length > 0) {
     return (
       <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
