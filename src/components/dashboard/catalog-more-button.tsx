@@ -19,13 +19,17 @@ export default function CatalogMoreButton({ onDelete, onView }: catalogMoreButto
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button className='ml-2' size={'icon'} variant={'outline'}>
+        <Button data-test='catalog-more-card' className='ml-2' size={'icon'} variant={'outline'}>
           <MoreHorizontal size={20} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side='top' align='end' alignOffset={-15} sideOffset={10}>
-        <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
+        <DropdownMenuItem data-test='catalog-view-card' onClick={onView}>
+          View
+        </DropdownMenuItem>
+        <DropdownMenuItem data-test='catalog-delete-card' onClick={onDelete}>
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

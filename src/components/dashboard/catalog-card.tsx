@@ -15,7 +15,7 @@ interface catalogCardProps {
 
 function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardProps) {
   return (
-    <Card className='flex items-center justify-between w-full'>
+    <Card data-test='catalog-card' className='flex items-center justify-between w-full'>
       <CardHeader className='flex-grow w-2/3'>
         <CardTitle className='truncate'>{title}</CardTitle>
         <CardDescription className='truncate'>{desc}</CardDescription>

@@ -11,8 +11,8 @@ describe('register', () => {
     cy.getDataTest('register-button-footer').click();
     cy.getDataTest('register-form').should('exist');
     // Fill the field
-    getDataTest('input-username-register').type('qwe');
-    getDataTest('input-email-register').type('qweqwe@qwe.com');
+    getDataTest('input-username-register').type('qweqwe');
+    getDataTest('input-email-register').type('qwe@qwe.com');
     getDataTest('input-password-register').type('qweqwe');
     getDataTest('submit-button-register').click();
     // Toast should pop up to indicate success

@@ -122,4 +122,5 @@ describe('create catalog', () => {
   });
 });
 
+// TODO: create this test
 describe.skip('check created catalog ui in dashboard', () => {});

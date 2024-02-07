@@ -1,6 +1,6 @@
 'use client';
 import { HOST } from '@/lib/global-var';
-import { cn } from '@/lib/utils';
+import { ascendingSort, cn, descendingSort } from '@/lib/utils';
 import Cookies from 'js-cookie';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import { HTMLAttributes, useEffect, useState } from 'react';
@@ -63,7 +63,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
-      console.log(result);
+
       setCatalog((val) => {
         const newCatalog = val.flatMap((item) => (item.id == id ? [] : item));
         return newCatalog;
@@ -93,6 +93,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
           redirect: 'follow',
         });
         const result = await response.json();
+        const data: catalogContainerProps[] = result.data.Catalog;
 
         if (response.status >= 500) {
           throw new Error('Internal server error, please contact admin');
@@ -101,7 +102,11 @@ export default function CatalogContainer({ children, className, ...props }: HTML
           throw new Error(result.errors ? result.errors : response.statusText);
         }
 
-        setCatalog(result.data.Catalog);
+        data.sort((a, b) => {
+          return parseInt(b.id.split('-')[5]) - parseInt(a.id.split('-')[5]);
+        });
+
+        setCatalog(data);
       } catch (error) {
         if (error instanceof Error) {
           toast({
@@ -117,7 +122,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     fetchCatalogData();
   }, []);
 
-  // TODO: fix the order where the most recent created will be displayed first
+  // TODO: create skeleton
   if (catalog.length > 0) {
     return (
       <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
@@ -140,7 +145,9 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   return (
     <Card className='flex-grow flex flex-col'>
       <CardHeader></CardHeader>
-      <CardContent className='flex-grow flex justify-center items-center'>You don't have any catalogs</CardContent>
+      <CardContent data-test='dashboard-empty' className='flex-grow flex justify-center items-center'>
+        You don't have any catalogs
+      </CardContent>
     </Card>
   );
 }

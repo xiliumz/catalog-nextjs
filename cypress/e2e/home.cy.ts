@@ -46,7 +46,7 @@ describe('auth ui functionality', () => {
   });
 });
 
-describe.only('auth home page functionality', () => {
+describe('auth home page functionality', () => {
   beforeEach(() => {
     cy.visit(`http://localhost:3000/`);
   });
