@@ -13,8 +13,9 @@ export function middleware(request: NextRequest) {
   if (!cookie) {
     return NextResponse.redirect(new URL('/', request.url));
   }
+  console.log(`Middleware: activated!! ${request.url}`);
 }
 
 export const config = {
-  matcher: ['/dashboard', '/profile', '/create'],
+  matcher: ['/dashboard', '/profile', '/create', '/edit/:catalogId*', '/u/:username*/:catalogId'],
 };

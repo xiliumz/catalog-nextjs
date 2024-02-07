@@ -64,7 +64,6 @@ export default function CatalogForm() {
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
-              console.log(item.id);
             }
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })

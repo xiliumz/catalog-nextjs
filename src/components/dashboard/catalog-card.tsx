@@ -10,9 +10,10 @@ interface catalogCardProps {
   desc?: string;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onView: (id: string) => void;
 }
 
-function CatalogCard({ id, title, desc, onDelete, onEdit }: catalogCardProps) {
+function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardProps) {
   return (
     <Card className='flex items-center justify-between w-full'>
       <CardHeader className='flex-grow w-2/3'>
@@ -29,7 +30,12 @@ function CatalogCard({ id, title, desc, onDelete, onEdit }: catalogCardProps) {
         >
           <Pencil size={20} />
         </Button>
-        <CatalogMoreButton onDelete={() => onDelete(id)} />
+        <CatalogMoreButton
+          onView={() => {
+            onView(id);
+          }}
+          onDelete={() => onDelete(id)}
+        />
       </CardFooter>
     </Card>
   );

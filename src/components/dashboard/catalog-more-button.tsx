@@ -12,9 +12,10 @@ import { MoreHorizontal } from 'lucide-react';
 
 export interface catalogMoreButtonProps {
   onDelete: () => void;
+  onView: () => void;
 }
 
-export default function CatalogMoreButton({ onDelete }: catalogMoreButtonProps) {
+export default function CatalogMoreButton({ onDelete, onView }: catalogMoreButtonProps) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -23,7 +24,7 @@ export default function CatalogMoreButton({ onDelete }: catalogMoreButtonProps) 
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side='top' align='end' alignOffset={-15} sideOffset={10}>
-        <DropdownMenuItem>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

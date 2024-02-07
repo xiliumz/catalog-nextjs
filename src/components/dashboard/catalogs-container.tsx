@@ -33,6 +33,13 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const { toast } = useToast();
   const router = useRouter();
 
+  const onView = (id: string) => {
+    const token = Cookies.get('session');
+    if (!token) return;
+    const username = jwtDecode<sessionProps>(token).id;
+    router.push(`/u/${username}/${id}`);
+  };
+
   const onEdit = (id: string) => {
     router.push(`/edit/${id}`);
   };
@@ -117,6 +124,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
         {catalog.map((val) => {
           return (
             <CatalogCard
+              onView={onView}
               onEdit={onEdit}
               onDelete={onDelete}
               id={val.id}
