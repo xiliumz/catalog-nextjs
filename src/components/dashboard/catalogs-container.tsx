@@ -1,5 +1,4 @@
 'use client';
-import { catalogContainerProps } from '@/features/catalogsSlice';
 import { HOST } from '@/lib/global-var';
 import { cn } from '@/lib/utils';
 import Cookies from 'js-cookie';
@@ -8,6 +7,20 @@ import { HTMLAttributes, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { useToast } from '../ui/use-toast';
 import CatalogCard from './catalog-card';
+
+export interface catalogProps {
+  id: string;
+  title: string;
+  desc?: string;
+  img?: string;
+}
+
+export interface catalogContainerProps {
+  id: string;
+  title: string;
+  desc?: string;
+  catalogs: catalogProps[];
+}
 
 export interface sessionProps extends JwtPayload {
   id: string;

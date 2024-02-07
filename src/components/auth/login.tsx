@@ -12,8 +12,6 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { delSession, setSession, setUser } from '@/features/userSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
@@ -35,14 +33,13 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   const [open, setOpenLogin] = React.useState(false);
   const [isLogin, setIsLogin] = React.useState(true);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const session = useAppSelector((s) => s.user.session);
-  const dispatch = useAppDispatch();
+  const [session, setSession] = React.useState<string | undefined>('');
   const { toast } = useToast();
 
   React.useEffect(() => {
     const token = Cookies.get('session');
+    setSession(token);
     if (token) {
-      dispatch(setSession(token));
       var myHeaders = new Headers();
       myHeaders.append('Authorization', token);
 
@@ -59,12 +56,9 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
           if (response.status >= 400) {
             throw new Error(result.errors ? result.errors : response.statusText);
           }
-
-          dispatch(setUser(data));
         } catch (error) {
           if (error instanceof Error) {
             Cookies.remove('session');
-            dispatch(delSession());
             toast({
               variant: 'destructive',
               title: 'Uh oh! Something went wrong.',
@@ -93,10 +87,7 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
           <Button
             {...props}
             onClick={() => {
-              if (!session) {
-                emitEvent(LOGIN_EVENT);
-                return;
-              }
+              emitEvent(LOGIN_EVENT);
             }}
             className={className}
             variant={variant ? variant : 'outline'}
@@ -124,10 +115,7 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
           {...props}
           className={className}
           onClick={() => {
-            if (!session) {
-              emitEvent(LOGIN_EVENT);
-              return;
-            }
+            emitEvent(LOGIN_EVENT);
           }}
           variant={variant ? variant : 'outline'}
         >
@@ -152,7 +140,6 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -202,11 +189,9 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           secure: true,
         });
         router.push('/dashboard');
-        dispatch(setSession(token));
       } catch (error) {
         if (error instanceof Error) {
           Cookies.remove('session');
-          dispatch(delSession());
           toast({
             variant: 'destructive',
             title: 'Uh oh! Something went wrong.',

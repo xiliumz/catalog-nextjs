@@ -1,5 +1,4 @@
 'use client';
-import { delSession } from '@/features/userSlice';
 import { useAppDispatch } from '@/hooks/store-hooks';
 import { HOST } from '@/lib/global-var';
 import Cookies from 'js-cookie';
@@ -29,7 +28,6 @@ function Logout() {
     })
       .then((response) => {
         Cookies.remove('session');
-        dispatch(delSession());
         router.push('/');
       })
       .catch((error) => {

@@ -1,11 +1,16 @@
 'use client';
-import { useAppSelector } from '@/hooks/store-hooks';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoginDrawerDialog } from './login';
 import DashboardButton from '../home/dashboard-button';
+import Cookies from 'js-cookie';
 
 function LogginButtonWrapper() {
-  const session = useAppSelector((s) => s.user.session);
+  const [session, setSession] = useState<string | undefined>();
+
+  useEffect(() => {
+    const token = Cookies.get('session');
+    setSession(token);
+  }, []);
 
   if (session) {
     return <DashboardButton />;

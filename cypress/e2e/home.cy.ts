@@ -45,3 +45,9 @@ describe('auth ui functionality', () => {
     cy.getDataTest('register-form').should('exist');
   });
 });
+
+describe('auth home page functionality', () => {
+  beforeEach(() => {
+    cy.visit(`http://localhost:3000/`);
+  });
+});

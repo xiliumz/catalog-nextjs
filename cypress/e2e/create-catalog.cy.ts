@@ -122,4 +122,4 @@ describe('create catalog', () => {
   });
 });
 
-describe.skip('check created catalog ui', () => {});
+describe.skip('check created catalog ui in dashboard', () => {});

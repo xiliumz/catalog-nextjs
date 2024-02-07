@@ -1,15 +1,21 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TypographySmall } from '../ui/typhography';
 import RegisterDrawerDialog from '../auth/register';
 import { LoginDrawerDialog } from '../auth/login';
-import { useAppSelector } from '@/hooks/store-hooks';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 function FooterHome() {
   const router = useRouter();
-  const session = useAppSelector((s) => s.user.session);
+  const [session, setSession] = useState<string | undefined>();
+
+  useEffect(() => {
+    const token = Cookies.get('session');
+    setSession(token);
+  }, []);
+
   if (session) {
     return (
       <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
