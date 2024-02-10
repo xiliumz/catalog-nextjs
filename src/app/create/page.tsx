@@ -1,3 +1,4 @@
+import ValidateToken from '@/components/auth/validate-token';
 import { PolyBackground } from '@/components/background';
 import CatalogForm from '@/components/create-catalog/catalog-form';
 import NavigationBar from '@/components/navigation-bar';
@@ -11,6 +12,7 @@ import { Toaster } from '@/components/ui/toaster';
 export default function CreateCatalog() {
   return (
     <>
+      <ValidateToken />
       <PolyBackground />
       <FullScreen>
         <NavigationBar>

@@ -45,7 +45,6 @@ export default function CatalogForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: FormData) {
-    // TODO: make sure create validation
     const formData = new FormData();
     const isItemsExists = values.items.length > 0;
     const token = Cookies.get('session');
@@ -64,6 +63,7 @@ export default function CatalogForm() {
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
+              console.log(`${item.id}.${ext}`);
             }
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })
@@ -185,6 +185,7 @@ export interface catalogItemProps {
 export function CatalogItem({ index, register, remove }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
 
+  // TODO: fix responsive
   return (
     <div
       data-test='catalog-item'

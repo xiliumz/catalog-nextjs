@@ -22,8 +22,10 @@ export default function ProfileDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent data-test='profile-dropdown-content' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        {/* TODO: add dashboard */}
         <DropdownMenuSeparator />
+        <Link href='/dashboard'>
+          <DropdownMenuItem>Dashboard</DropdownMenuItem>
+        </Link>
         <Link href='/profile'>
           <DropdownMenuItem>Profile</DropdownMenuItem>
         </Link>

@@ -13,8 +13,8 @@ export function PolyBackground() {
         <path
           d='M0 166L25 183.8C50 201.7 100 237.3 150 239.5C200 241.7 250 210.3 300 170.8C350 131.3 400 83.7 450 92.2C500 100.7 550 165.3 600 161.3C650 157.3 700 84.7 750 60.7C800 36.7 850 61.3 875 73.7L900 86L900 0L875 0C850 0 800 0 750 0C700 0 650 0 600 0C550 0 500 0 450 0C400 0 350 0 300 0C250 0 200 0 150 0C100 0 50 0 25 0L0 0Z'
           fill='rgba(37, 100, 235, 0.07)'
-          stroke-linecap='round'
-          stroke-linejoin='miter'
+          strokeLinecap='round'
+          strokeLinejoin='miter'
         ></path>
       </g>
       <defs>

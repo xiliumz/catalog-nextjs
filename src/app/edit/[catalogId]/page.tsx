@@ -1,3 +1,4 @@
+import ValidateToken from '@/components/auth/validate-token';
 import { PolyBackground } from '@/components/background';
 import NavigationBar from '@/components/navigation-bar';
 import ProfileDropdown from '@/components/profile-dropdown';
@@ -8,6 +9,7 @@ import React from 'react';
 export default function EditCatalog({ params }: { params: { catalogId: string } }) {
   return (
     <>
+      <ValidateToken />
       <PolyBackground />
       <FullScreen>
         <NavigationBar>
