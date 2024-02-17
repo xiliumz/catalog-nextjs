@@ -3,15 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
 
-export default function ViewHeader() {
-  const [title, setTitle] = useState<string | undefined>();
-  const [desc, setDesc] = useState<string | undefined>();
+export default function ViewHeader({ titleParam, descParam }: { titleParam?: string; descParam?: string }) {
+  const [title, setTitle] = useState<string | undefined>(titleParam);
+  const [desc, setDesc] = useState<string | undefined>(descParam);
+
   useEffect(() => {
-    setTimeout(() => {
-      setTitle('Test');
-      setDesc('Test');
-    }, 1000);
-  }, []);
+    setTitle(titleParam);
+    setDesc(descParam);
+  }, [titleParam, descParam]);
 
   return (
     <CardHeader>
@@ -21,7 +20,7 @@ export default function ViewHeader() {
         <Skeleton className='h-9 w-full lg:h-12' />
       )}
       <br />
-      {desc ? <CardDescription>{desc}</CardDescription> : <Skeleton className='h-5 w-full' />}
+      {desc != undefined ? <CardDescription>{desc}</CardDescription> : <Skeleton className='h-5 w-full' />}
     </CardHeader>
   );
 }

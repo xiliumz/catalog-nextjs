@@ -10,43 +10,12 @@ import ViewItem from './view-item';
 import ViewTag from './view-tag';
 
 export interface contentProps extends HTMLAttributes<HTMLDivElement> {
-  catalogId: string;
-  user: string;
+  catalogs: catalogProps[];
+  tag?: string[];
 }
 
 // TODO:put the data into DOM
-export default function ViewContent({ catalogId, user, className, ...props }: contentProps) {
-  const [catalogContainer, setCatalogContainer] = useState<catalogContainerProps[]>([]);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await fetch(`${HOST}/catalog/${user}/${catalogId}`, {
-          method: 'GET',
-          redirect: 'follow',
-        });
-        const result = (await response.json()).data;
-
-        console.log(result);
-        if (!response.ok)
-          throw new Error(
-            result.errors ? result.errors : 'An unexpected error occurred. Please contact the administrator.'
-          );
-        const data: catalogContainerProps = result.data;
-        setCatalogContainer([data]);
-      } catch (e) {
-        if (e instanceof Error) {
-          toast({
-            title: 'Something wrong',
-            description: e.message,
-          });
-        }
-      }
-    };
-    getData();
-  }, []);
-
+export default function ViewContent({ catalogs, tag, className, ...props }: contentProps) {
   return (
     <>
       <Input className='w-full' placeholder='Find an insteresting product . . . ' />
@@ -55,11 +24,9 @@ export default function ViewContent({ catalogId, user, className, ...props }: co
         <ViewTag id='1' tag='Tag 1' />
         <Separator className='h-auto' orientation='vertical' />
         <div className='w-full pl-4 grid grid-cols-3 gap-x-4 gap-y-6'>
-          <ViewItem />
-          <ViewItem />
-          <ViewItem />
-          <ViewItem />
-          <ViewItem />
+          {catalogs.map((item) => (
+            <ViewItem title={item.title} desc={item.desc} img={item.img} key={item.id} />
+          ))}
         </div>
       </div>
     </>
