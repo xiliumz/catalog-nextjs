@@ -6,6 +6,8 @@ import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
 import ViewItem from './view-item';
 import ViewTag from './view-tag';
+import { Skeleton } from '../ui/skeleton';
+import { AspectRatio } from '../ui/aspect-ratio';
 
 export interface contentProps extends HTMLAttributes<HTMLDivElement> {
   catalogs: catalogProps[];
@@ -14,7 +16,7 @@ export interface contentProps extends HTMLAttributes<HTMLDivElement> {
 
 export default function ViewContent({ catalogs: item, tag, className, ...props }: contentProps) {
   const [search, setSearch] = useState('');
-  const [catalogs, setCatalogs] = useState(item);
+  const [catalogs, setCatalogs] = useState<catalogProps[] | undefined>();
 
   useEffect(() => {
     setCatalogs(item);
@@ -30,19 +32,54 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
       return filteredCatalogs;
     });
   };
+  if (!catalogs) {
+    return (
+      <>
+        <Input className='w-full' placeholder='Find an insteresting product . . . ' onInput={onInput} value={search} />
+        <div className={cn('w-full sm:flex mt-2', className)} {...props}>
+          <ViewTag id='1' tag='Tag 1' />
+          <Separator className='h-auto hidden sm:block' orientation='vertical' />
+          <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
+            <div className='shadow-md rounded-sm px-3 py-4'>
+              <AspectRatio>
+                <Skeleton className='bg-muted rounded-sm w-full transition-all hover:scale-105 h-full ' />
+              </AspectRatio>
+              <Skeleton className='h-[28px] mt-5' />
+              <Skeleton className='h-[20px] mt-2' />
+            </div>
+            <div className='shadow-md rounded-sm px-3 py-4'>
+              <AspectRatio>
+                <Skeleton className='bg-muted rounded-sm w-full transition-all hover:scale-105 h-full ' />
+              </AspectRatio>
+              <Skeleton className='h-[28px] mt-5' />
+              <Skeleton className='h-[20px] mt-2' />
+            </div>
+            <div className='shadow-md rounded-sm px-3 py-4'>
+              <AspectRatio>
+                <Skeleton className='bg-muted rounded-sm w-full transition-all hover:scale-105 h-full' />
+              </AspectRatio>
+              <Skeleton className='h-[28px] mt-5' />
+              <Skeleton className='h-[20px] mt-2' />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Input className='w-full' placeholder='Find an insteresting product . . . ' onInput={onInput} value={search} />
-      <div className={cn('w-full flex mt-2', className)} {...props}>
+      <div className={cn('w-full sm:flex mt-2', className)} {...props}>
         <ViewTag id='1' tag='Tag 1' />
-        <Separator className='h-auto' orientation='vertical' />
-        {/* TODO: create skeleton */}
-        <div className='w-full pl-4 grid grid-cols-3 gap-x-4 gap-y-6'>
+        <Separator className='h-auto hidden sm:block' orientation='vertical' />
+        {/* <Skeleton className='h-[calc(100vw/3.82297502)] w-full m-3' /> */}
+        <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
           {catalogs.map((item) => {
             return <ViewItem title={item.title} desc={item.desc} imagePath={item.imagePath} key={item.id} />;
           })}
         </div>
+        ;
       </div>
     </>
   );

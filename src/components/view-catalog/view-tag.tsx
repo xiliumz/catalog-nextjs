@@ -9,8 +9,8 @@ export interface tagProps {
 
 export default function ViewTag({ id, tag }: tagProps) {
   return (
-    <div className='w-1/4 px-5 py-5'>
-      <div className='flex items-center gap-2 p-1 '>
+    <div className='sm:w-1/4 px-5 py-5'>
+      <div className='flex items-center gap-2 p-1 w-full '>
         <Checkbox className='rounded' id={id} />
         <Label className='w-full' htmlFor={id}>
           ${tag}
