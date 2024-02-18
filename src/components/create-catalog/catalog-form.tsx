@@ -186,7 +186,6 @@ export interface catalogItemProps {
 export function CatalogItem({ index, register, remove }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
 
-  // TODO: fix responsive
   return (
     <div
       data-test='catalog-item'
@@ -203,8 +202,6 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         />
       </FormItem>
 
-      {/* TODO: fix rezize so textarea can fit the remaining height */}
-      {/* TODO: fix textarea not align with the title */}
       <FormItem className='w-full px-4'>
         <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
         <Textarea

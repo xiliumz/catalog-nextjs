@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from '../ui/card';
 import { useToast } from '../ui/use-toast';
 import CatalogCard from './catalog-card';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '../ui/skeleton';
 
 export interface catalogProps {
   id: string;
@@ -29,7 +30,7 @@ export interface sessionProps extends JwtPayload {
 }
 
 export default function CatalogContainer({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[]>([]);
+  const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[] | undefined>();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -65,7 +66,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
       }
 
       setCatalog((val) => {
-        const newCatalog = val.flatMap((item) => (item.id == id ? [] : item));
+        const newCatalog = val?.flatMap((item) => (item.id == id ? [] : item));
         return newCatalog;
       });
     } catch (e) {
@@ -122,7 +123,17 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     fetchCatalogData();
   }, []);
 
-  // TODO: create skeleton
+  if (!catalog) {
+    return (
+      <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
+        <Skeleton className='h-[100px]' />
+        <Skeleton className='h-[100px]' />
+        <Skeleton className='h-[100px]' />
+        <Skeleton className='h-[100px]' />
+      </div>
+    );
+  }
+
   if (catalog.length > 0) {
     return (
       <div {...props} className={cn('w-full grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-x-10', className)}>
