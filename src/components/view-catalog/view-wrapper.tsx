@@ -37,7 +37,6 @@ export default function ViewWrapper({ catalogId, user }: { catalogId: string; us
     getData();
   }, []);
 
-  console.log(catalogContainer);
   if (catalogContainer) {
     return (
       <>

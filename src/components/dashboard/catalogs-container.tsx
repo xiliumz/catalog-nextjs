@@ -13,7 +13,7 @@ export interface catalogProps {
   id: string;
   title: string;
   desc?: string;
-  img?: string;
+  imagePath?: string;
 }
 
 export interface catalogContainerProps {

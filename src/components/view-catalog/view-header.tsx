@@ -20,7 +20,11 @@ export default function ViewHeader({ titleParam, descParam }: { titleParam?: str
         <Skeleton className='h-9 w-full lg:h-12' />
       )}
       <br />
-      {desc != undefined ? <CardDescription>{desc}</CardDescription> : <Skeleton className='h-5 w-full' />}
+      {desc != undefined ? (
+        <CardDescription className='min-h-5'>{desc}</CardDescription>
+      ) : (
+        <Skeleton className='h-5 w-full' />
+      )}
     </CardHeader>
   );
 }

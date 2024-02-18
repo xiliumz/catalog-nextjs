@@ -59,7 +59,7 @@ describe('dashboard functionality', () => {
     getDataTest('catalog-title-card').eq(4).should('have.text', 'Test1');
   });
 
-  it.skip('should delete all catalog items', () => {
+  it('should delete all catalog items', () => {
     getDataTest('catalog-more-card').should('have.length', 6);
     for (let i = 1; i <= 6; i++) {
       getDataTest('catalog-more-card').eq(0).click();

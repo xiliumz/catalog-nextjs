@@ -9,7 +9,6 @@ export default function ValidateToken() {
   const { toast } = useToast();
   useEffect(() => {
     const token = Cookies.get('session');
-    console.log(token);
     if (!token) return;
 
     const getUser = async () => {

@@ -14,7 +14,7 @@ import { getFileExt, renameFile } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { catalogProps } from '../dashboard/catalogs-container';
 
-interface itemProps extends Omit<catalogProps, 'id' | 'img'> {
+interface itemProps extends Omit<catalogProps, 'id' | 'imagePath'> {
   id: number;
   img?: FileList;
 }
@@ -65,6 +65,7 @@ export default function CatalogForm() {
               formData.append('images', image, `${item.id}.${ext}`);
               console.log(`${item.id}.${ext}`);
             }
+            console.log(formData.getAll('images'));
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })
         )

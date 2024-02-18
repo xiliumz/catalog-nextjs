@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { catalogProps } from '../dashboard/catalogs-container';
 import { AspectRatio } from '../ui/aspect-ratio';
 
-export default function ViewItem({ title, desc, img = '' }: Omit<catalogProps, 'id'>) {
+export default function ViewItem({ title, desc, imagePath = '' }: Omit<catalogProps, 'id'>) {
   return (
     <div className='shadow-md rounded-sm px-3 py-4'>
       <AspectRatio ratio={1 / 1}>
@@ -12,8 +12,9 @@ export default function ViewItem({ title, desc, img = '' }: Omit<catalogProps, '
           width={500}
           height={500}
           alt=''
-          // fill={true}
-          src={img}
+          src={`${process.env.host}/${imagePath}`}
+          quality={50}
+          priority={true}
         />
       </AspectRatio>
       <h3 className='scroll-m-20 text-xl font-semibold tracking-tight mt-5'>{title}</h3>
