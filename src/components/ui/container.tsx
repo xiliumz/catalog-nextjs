@@ -7,9 +7,9 @@ const containerVariants = cva('px-4 md:px-8 w-full mx-auto w-full', {
     size: {
       xxl: 'xxl:w-[1536px]',
       xl: 'xl:w-[1280px]',
-      lg: 'lg:w-[1024px]',
-      md: 'md:w-[768px]',
-      sm: 'sm:w-[640px]',
+      lg: 'lg:w-[1012px]',
+      md: 'md:w-[756px]',
+      sm: 'sm:w-[628px]',
     },
   },
   defaultVariants: { size: 'xl' },

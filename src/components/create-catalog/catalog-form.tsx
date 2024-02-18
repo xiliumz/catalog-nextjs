@@ -190,9 +190,9 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
   return (
     <div
       data-test='catalog-item'
-      className='border flex flex-col justify-evenly items-center gap-2 min-h-40 py-5 rounded-[var(--radius)]'
+      className='border flex flex-col justify-start items-center gap-2 min-h-40 py-5 rounded-[var(--radius)]'
     >
-      <FormItem>
+      <FormItem className='w-full px-4'>
         <FormLabel htmlFor={`item-title${index}`}>Title</FormLabel>
         <Input
           data-test='item-title-input'
@@ -205,7 +205,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
 
       {/* TODO: fix rezize so textarea can fit the remaining height */}
       {/* TODO: fix textarea not align with the title */}
-      <FormItem>
+      <FormItem className='w-full px-4'>
         <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
         <Textarea
           data-test='item-desc-input'
@@ -216,7 +216,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         />
       </FormItem>
 
-      <FormItem className='mt-2'>
+      <FormItem className='mt-2 w-full px-4'>
         <FormLabel
           className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground rounded mr-28'
           htmlFor={`item-img${index}`}
@@ -246,7 +246,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         onClick={() => {
           remove(index);
         }}
-        className='text-destructive/80 font-semibold hover:text-destructive hover:font-bold'
+        className='text-destructive/80 font-semibold hover:text-destructive hover:font-bold mt-auto'
       >
         DELETE
       </Button>
