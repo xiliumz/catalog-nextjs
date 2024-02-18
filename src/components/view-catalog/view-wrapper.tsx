@@ -30,6 +30,7 @@ export default function ViewWrapper({ catalogId, user }: { catalogId: string; us
           toast({
             title: 'Something wrong',
             description: e.message,
+            variant: 'destructive',
           });
         }
       }
