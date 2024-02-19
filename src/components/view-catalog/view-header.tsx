@@ -15,13 +15,17 @@ export default function ViewHeader({ titleParam, descParam }: { titleParam?: str
   return (
     <CardHeader>
       {title ? (
-        <CardTitle className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>{title}</CardTitle>
+        <CardTitle data-test='view-title' className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>
+          {title}
+        </CardTitle>
       ) : (
         <Skeleton className='h-9 w-full lg:h-12' />
       )}
       <br />
       {desc != undefined ? (
-        <CardDescription className='min-h-5'>{desc}</CardDescription>
+        <CardDescription data-test='view-desc' className='min-h-5'>
+          {desc}
+        </CardDescription>
       ) : (
         <Skeleton className='h-5 w-full' />
       )}

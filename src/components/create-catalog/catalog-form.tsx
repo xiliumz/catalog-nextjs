@@ -195,6 +195,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         <FormLabel htmlFor={`item-title${index}`}>Title</FormLabel>
         <Input
           data-test='item-title-input'
+          required
           className='rounded-sm my-2'
           id={`item-title${index}`}
           placeholder='Title'
@@ -206,6 +207,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
         <Textarea
           data-test='item-desc-input'
+          required
           className='my-2 resize-y'
           id={`item-value${index}`}
           placeholder='Description'

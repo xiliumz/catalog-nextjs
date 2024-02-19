@@ -16,6 +16,7 @@ export default function ViewCatalog({ params }: { params: { username: string; ca
         <NavigationBar>
           <div className='flex justify-center items-center lg:mr-3'>
             <ModeToggle />
+            {/* TODO: if user is logged in then display profile else display login */}
             <ProfileDropdown />
           </div>
         </NavigationBar>

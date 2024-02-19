@@ -35,7 +35,13 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
   if (!catalogs) {
     return (
       <>
-        <Input className='w-full' placeholder='Find an insteresting product . . . ' onInput={onInput} value={search} />
+        <Input
+          data-test='view-search'
+          className='w-full'
+          placeholder='Find an insteresting product . . . '
+          onInput={onInput}
+          value={search}
+        />
         <div className={cn('w-full sm:flex mt-2', className)} {...props}>
           <ViewTag id='1' tag='Tag 1' />
           <Separator className='h-auto hidden sm:block' orientation='vertical' />
@@ -67,9 +73,16 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
     );
   }
 
+  // TODO: if no content display no content
   return (
     <>
-      <Input className='w-full' placeholder='Find an insteresting product . . . ' onInput={onInput} value={search} />
+      <Input
+        className='w-full'
+        data-test='view-search'
+        placeholder='Find an insteresting product . . . '
+        onInput={onInput}
+        value={search}
+      />
       <div className={cn('w-full sm:flex mt-2', className)} {...props}>
         <ViewTag id='1' tag='Tag 1' />
         <Separator className='h-auto hidden sm:block' orientation='vertical' />

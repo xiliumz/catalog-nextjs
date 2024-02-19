@@ -11,6 +11,7 @@ function NavigationBar({ size, children, className, ...props }: NavigationBarPro
     return (
       <Container size={size}>
         <nav className={cn(`flex w-full justify-between items-center px-4 pt-3`, className)}>
+          {/* TODO: if user click go to root page `/` */}
           <div className='scroll-m-20 text-2xl font-semibold tracking-tight'>catalog</div>
           {children}
         </nav>
