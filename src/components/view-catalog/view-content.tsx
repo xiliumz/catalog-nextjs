@@ -88,11 +88,10 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
         <Separator className='h-auto hidden sm:block' orientation='vertical' />
         {/* <Skeleton className='h-[calc(100vw/3.82297502)] w-full m-3' /> */}
         <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
-          {catalogs.map((item) => {
-            return <ViewItem title={item.title} desc={item.desc} imagePath={item.imagePath} key={item.id} />;
-          })}
+          {catalogs.map((item) => (
+            <ViewItem title={item.title} desc={item.desc} imagePath={item.imagePath} key={item.id} />
+          ))}
         </div>
-        ;
       </div>
     </>
   );

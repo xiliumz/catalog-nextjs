@@ -1,6 +1,6 @@
+import LogginButtonWrapper from '@/components/auth/login-button-wrapper';
 import { PolyBackground } from '@/components/background';
 import NavigationBar from '@/components/navigation-bar';
-import ProfileDropdown from '@/components/profile-dropdown';
 import { ModeToggle } from '@/components/toggle-theme';
 import { Card } from '@/components/ui/card';
 import Container from '@/components/ui/container';
@@ -16,11 +16,9 @@ export default function ViewCatalog({ params }: { params: { username: string; ca
         <NavigationBar>
           <div className='flex justify-center items-center lg:mr-3'>
             <ModeToggle />
-            {/* TODO: if user is logged in then display profile else display login */}
-            <ProfileDropdown />
+            <LogginButtonWrapper />
           </div>
         </NavigationBar>
-        <br />
         <Container>
           <Card>
             <ViewWrapper user={params.username} catalogId={params.catalogId} />
