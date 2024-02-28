@@ -118,7 +118,9 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
 function NoContent() {
   return (
     <div className='w-full py-28'>
-      <p className='leading-7 [&:not(:first-child)]:mt-6 w-full text-center text-muted-foreground'>No Item</p>
+      <p data-test='no-item' className='leading-7 [&:not(:first-child)]:mt-6 w-full text-center text-muted-foreground'>
+        No Item
+      </p>
     </div>
   );
 }

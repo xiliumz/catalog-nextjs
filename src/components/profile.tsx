@@ -36,7 +36,6 @@ export default function ProfileForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Do something with the form values.
     const myHeader = new Headers();
     myHeader.append('Content-Type', 'application/json');
     const token = Cookies.get('session');

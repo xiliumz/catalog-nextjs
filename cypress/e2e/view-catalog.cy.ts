@@ -73,8 +73,7 @@ describe('display test', () => {
     getDataTest('view-title').should('contain.text', 'Without item');
     getDataTest('view-desc').should('have.text', 'should display catalog without item');
 
-    // TODO: check wheter it displays no item message or not
-    // getDataTest('view-item-title').should('have.length', 3);
+    getDataTest('no-item').should('exist');
     cy.screenshot();
   });
 
@@ -86,8 +85,7 @@ describe('display test', () => {
     getDataTest('view-title').should('contain.text', 'No item and desc');
     getDataTest('view-desc').should('have.text', '');
 
-    // TODO: check wheter it displays no item message or not
-    // getDataTest('view-item-title').should('have.length', 3);
+    getDataTest('no-item').should('exist');
     cy.screenshot();
   });
   it('should visit by url directly', () => {
