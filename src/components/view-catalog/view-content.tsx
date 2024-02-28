@@ -32,6 +32,7 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
       return filteredCatalogs;
     });
   };
+
   if (!catalogs) {
     return (
       <>
@@ -73,7 +74,25 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
     );
   }
 
-  // TODO: if no content display no content
+  if (catalogs.length <= 0) {
+    return (
+      <>
+        <Input
+          className='w-full'
+          data-test='view-search'
+          placeholder='Find an insteresting product . . . '
+          onInput={onInput}
+          value={search}
+        />
+        <div className={cn('w-full sm:flex mt-2', className)} {...props}>
+          <ViewTag id='1' tag='Tag 1' />
+          <Separator className='h-auto hidden sm:block' orientation='vertical' />
+          <NoContent />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Input
@@ -86,7 +105,6 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
       <div className={cn('w-full sm:flex mt-2', className)} {...props}>
         <ViewTag id='1' tag='Tag 1' />
         <Separator className='h-auto hidden sm:block' orientation='vertical' />
-        {/* <Skeleton className='h-[calc(100vw/3.82297502)] w-full m-3' /> */}
         <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
           {catalogs.map((item) => (
             <ViewItem title={item.title} desc={item.desc} imagePath={item.imagePath} key={item.id} />
@@ -94,5 +112,13 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
         </div>
       </div>
     </>
+  );
+}
+
+function NoContent() {
+  return (
+    <div className='w-full py-28'>
+      <p className='leading-7 [&:not(:first-child)]:mt-6 w-full text-center text-muted-foreground'>No Item</p>
+    </div>
   );
 }

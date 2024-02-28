@@ -42,7 +42,7 @@ export default function ViewWrapper({ catalogId, user }: { catalogId: string; us
     return (
       <>
         <ViewHeader titleParam={catalogContainer?.title} descParam={catalogContainer?.desc || ''} />
-        <CardContent className='p-1 sm:p-6'>
+        <CardContent className='p-1 sm:p-6 sm:pb-1'>
           <ViewContent catalogs={catalogContainer?.catalogs} />
         </CardContent>
       </>
