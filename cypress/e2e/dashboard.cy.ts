@@ -67,10 +67,4 @@ describe('dashboard functionality', () => {
     }
     getDataTest('dashboard-empty').should('exist');
   });
-
-  // TODO: Move this to view test
-  it.skip('should go to view with the corresponding data', () => {
-    getDataTest('catalog-more-card').eq(0).click();
-    getDataTest('catalog-view-card').click();
-  });
 });

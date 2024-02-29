@@ -1,6 +1,6 @@
 import ValidateToken from '@/components/auth/validate-token';
 import { PolyBackground } from '@/components/background';
-import CatalogForm from '@/components/create-catalog/catalog-form';
+import CreateForm from '@/components/create-catalog/catalog-form';
 import NavigationBar from '@/components/navigation-bar';
 import ProfileDropdown from '@/components/profile-dropdown';
 import { ModeToggle } from '@/components/toggle-theme';
@@ -26,7 +26,7 @@ export default function CreateCatalog() {
             <CardHeader>
               <CardTitle>Create Catalog</CardTitle>
             </CardHeader>
-            <CatalogForm />
+            <CreateForm />
           </Card>
         </Container>
         <Toaster />

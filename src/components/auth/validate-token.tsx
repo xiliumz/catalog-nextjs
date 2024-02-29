@@ -1,7 +1,6 @@
 'use client';
 import { HOST } from '@/lib/global-var';
 import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
 import { useEffect } from 'react';
 import { useToast } from '../ui/use-toast';
 

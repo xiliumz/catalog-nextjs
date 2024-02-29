@@ -1,42 +1,33 @@
 'use client';
-import { Plus } from 'lucide-react';
-import { HTMLAttributes, useState } from 'react';
-import { FieldValues, UseFieldArrayRemove, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
-import { Button } from '../ui/button';
-import { CardContent, CardFooter } from '../ui/card';
+import { HOST } from '@/lib/global-var';
+import React, { useEffect, useState } from 'react';
+import { catalogContainerProps, sessionProps } from '../dashboard/catalogs-container';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import { AddItem, CatalogFormData, CatalogItem } from '../create-catalog/catalog-form';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
+import { getFileExt } from '@/lib/utils';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { CardContent, CardFooter } from '../ui/card';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import Cookies from 'js-cookie';
-import { HOST } from '@/lib/global-var';
-import { useToast } from '../ui/use-toast';
-import { getFileExt, renameFile } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { catalogProps } from '../dashboard/catalogs-container';
 
-interface itemProps extends Omit<catalogProps, 'id'> {
-  id: number | string;
-  img?: FileList;
-}
-
-export interface CatalogFormData extends FieldValues {
-  title: string;
-  description?: string;
-  items: itemProps[];
-}
-
-export default function CreateForm() {
+export default function EditForm({ catalog }: { catalog?: catalogContainerProps }) {
   // 1. Define your form.
   const { toast } = useToast();
   const router = useRouter();
+  console.log(catalog);
 
   const form = useForm<CatalogFormData>({
     defaultValues: {
-      title: '',
-      description: '',
-      items: [],
+      title: catalog?.title,
+      description: catalog?.desc,
+      items: catalog?.catalogs,
     },
   });
+
   const items = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'items', // unique name for your Field Array
@@ -44,6 +35,7 @@ export default function CreateForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
+    // TODO: change to update catalog
     const formData = new FormData();
     const isItemsExists = values.items.length > 0;
     const token = Cookies.get('session');
@@ -137,7 +129,13 @@ export default function CreateForm() {
               <FormLabel className='mb-5'>Create Catalog's items</FormLabel>
               <div className='grid gap-4 md:grid-cols-3 sm:grid-cols-2 mb-2'>
                 {items.fields.map((field, index) => (
-                  <CatalogItem key={field.id} index={index} register={form.register} remove={items.remove} />
+                  <CatalogItem
+                    key={field.id}
+                    index={index}
+                    register={form.register}
+                    remove={items.remove}
+                    imagePath={field.imagePath}
+                  />
                 ))}
                 <AddItem
                   data-test='add-catalog-item-button'
@@ -159,96 +157,5 @@ export default function CreateForm() {
         </form>
       </Form>
     </>
-  );
-}
-
-export function AddItem({ ...props }: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <>
-      <div
-        className='border rounded-[var(--radius)] text-muted-foreground flex flex-col justify-center items-center hover:cursor-pointer hover:text-accent-foreground h-40'
-        {...props}
-      >
-        <Plus className='' size={48} />
-        <p>Create item</p>
-      </div>
-    </>
-  );
-}
-
-export interface catalogItemProps {
-  index: number;
-  register: UseFormRegister<CatalogFormData>;
-  remove: UseFieldArrayRemove;
-  imagePath?: string;
-}
-
-export function CatalogItem({ index, register, remove }: catalogItemProps) {
-  const [fileName, setFileName] = useState('');
-
-  return (
-    <div
-      data-test='catalog-item'
-      className='border flex flex-col justify-start items-center gap-2 min-h-40 py-5 rounded-[var(--radius)]'
-    >
-      <FormItem className='w-full px-4'>
-        <FormLabel htmlFor={`item-title${index}`}>Title</FormLabel>
-        <Input
-          data-test='item-title-input'
-          required
-          className='rounded-sm my-2'
-          id={`item-title${index}`}
-          placeholder='Title'
-          {...register(`items.${index}.title` as const, {})}
-        />
-      </FormItem>
-
-      <FormItem className='w-full px-4'>
-        <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
-        <Textarea
-          data-test='item-desc-input'
-          required
-          className='my-2 resize-y'
-          id={`item-value${index}`}
-          placeholder='Description'
-          {...register(`items.${index}.desc` as const, {})}
-        />
-      </FormItem>
-
-      <FormItem className='mt-2 w-full px-4'>
-        <FormLabel
-          className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground rounded mr-28'
-          htmlFor={`item-img${index}`}
-          data-test='item-file-input'
-        >
-          Upload image
-        </FormLabel>
-        <p>{fileName}</p>
-        <Input
-          className='absolute w-0 h-0 -z-50'
-          id={`item-img${index}`}
-          {...register(`items.${index}.img` as const, {})}
-          type='file'
-          onChange={(e) => {
-            const file = e.target.files;
-            if (file === null) return;
-            setFileName(file.length > 0 ? file[0].name : '');
-          }}
-          accept='image/*'
-        />
-      </FormItem>
-
-      <Button
-        size={'sm'}
-        variant={'ghost'}
-        type='button'
-        onClick={() => {
-          remove(index);
-        }}
-        className='text-destructive/80 font-semibold hover:text-destructive hover:font-bold mt-auto'
-      >
-        DELETE
-      </Button>
-    </div>
   );
 }
