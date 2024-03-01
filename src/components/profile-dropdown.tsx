@@ -26,7 +26,7 @@ export default function ProfileDropdown() {
         <Link href='/dashboard'>
           <DropdownMenuItem>Dashboard</DropdownMenuItem>
         </Link>
-        <Link href='/profile'>
+        <Link data-test='profile-button' href='/profile'>
           <DropdownMenuItem>Profile</DropdownMenuItem>
         </Link>
         <Logout />

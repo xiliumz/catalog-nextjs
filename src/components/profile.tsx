@@ -110,7 +110,7 @@ export default function ProfileForm() {
                 <FormLabel>Password</FormLabel>
                 <FormDescription>Change your password.</FormDescription>
                 <FormControl>
-                  <Input type='password' {...field} />
+                  <Input data-test='profile-password-input' type='password' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -118,7 +118,7 @@ export default function ProfileForm() {
           />
 
           <div className='w-full text-right'>
-            <Button className='ml-auto' type='submit'>
+            <Button className='ml-auto' type='submit' data-test='profile-submit'>
               Submit
             </Button>
           </div>
