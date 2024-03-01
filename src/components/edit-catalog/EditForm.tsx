@@ -13,12 +13,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { CardContent, CardFooter } from '../ui/card';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import { Button } from '../ui/button';
 
-export default function EditForm({ catalog }: { catalog?: catalogContainerProps }) {
+export default function EditForm({ catalog, catalogId }: { catalog?: catalogContainerProps; catalogId: string }) {
   // 1. Define your form.
   const { toast } = useToast();
   const router = useRouter();
-  console.log(catalog);
 
   const form = useForm<CatalogFormData>({
     defaultValues: {
@@ -35,13 +35,11 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
-    // TODO: change to update catalog
     const formData = new FormData();
     const isItemsExists = values.items.length > 0;
     const token = Cookies.get('session');
 
     const myHeader = new Headers();
-
     if (token) myHeader.append('Authorization', token);
     formData.append('title', values.title);
     if (values.description) formData.append('desc', values.description);
@@ -54,9 +52,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
-              console.log(`${item.id}.${ext}`);
             }
-            console.log(formData.getAll('images'));
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })
         )
@@ -64,8 +60,8 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
     }
 
     try {
-      const response = await fetch(`${HOST}/catalog/create`, {
-        method: 'POST',
+      const response = await fetch(`${HOST}/catalog/update/${catalogId}`, {
+        method: 'PUT',
         headers: myHeader,
         body: formData,
         redirect: 'follow',
@@ -146,7 +142,16 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
               </div>
             </FormItem>
           </CardContent>
-          <CardFooter className='justify-end'>
+          <CardFooter className='justify-end gap-3'>
+            <Button
+              onClick={() => {
+                router.push('/dashboard');
+              }}
+              type='button'
+              variant={'destructive'}
+            >
+              Cancel
+            </Button>
             <input
               data-test='create-submit-button'
               className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'

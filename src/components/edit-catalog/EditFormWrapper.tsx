@@ -43,7 +43,7 @@ export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
     getData();
   }, []);
 
-  if (!catalog) return <EditForm key='1' catalog={catalog} />;
+  if (!catalog) return <EditForm catalogId={catalogId} key='1' catalog={catalog} />;
 
-  return <EditForm key='2' catalog={catalog} />;
+  return <EditForm catalogId={catalogId} key='2' catalog={catalog} />;
 }

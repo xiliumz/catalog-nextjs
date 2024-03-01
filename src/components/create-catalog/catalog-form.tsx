@@ -62,9 +62,7 @@ export default function CreateForm() {
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
-              console.log(`${item.id}.${ext}`);
             }
-            console.log(formData.getAll('images'));
             return { id: item.id.toString(), title: item.title, desc: item.desc };
           })
         )
@@ -183,7 +181,7 @@ export interface catalogItemProps {
   imagePath?: string;
 }
 
-export function CatalogItem({ index, register, remove }: catalogItemProps) {
+export function CatalogItem({ index, register, remove, imagePath }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
 
   return (
@@ -216,6 +214,11 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
       </FormItem>
 
       <FormItem className='mt-2 w-full px-4'>
+        {imagePath && (
+          <p className='text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 h-9 text-muted-foreground rounded truncate w-full'>
+            {fileName ? fileName : imagePath}
+          </p>
+        )}
         <FormLabel
           className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground rounded mr-28'
           htmlFor={`item-img${index}`}
@@ -223,7 +226,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
         >
           Upload image
         </FormLabel>
-        <p>{fileName}</p>
+        <p className='truncate'>{imagePath ? '' : fileName}</p>
         <Input
           className='absolute w-0 h-0 -z-50'
           id={`item-img${index}`}
@@ -232,7 +235,7 @@ export function CatalogItem({ index, register, remove }: catalogItemProps) {
           onChange={(e) => {
             const file = e.target.files;
             if (file === null) return;
-            setFileName(file.length > 0 ? file[0].name : '');
+            setFileName(file.length > 0 ? file[0].name : 'no-image');
           }}
           accept='image/*'
         />

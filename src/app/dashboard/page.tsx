@@ -1,6 +1,5 @@
 import ValidateToken from '@/components/auth/validate-token';
 import { PolyBackground } from '@/components/background';
-import CatalogCard from '@/components/dashboard/catalog-card';
 import CatalogContainer from '@/components/dashboard/catalogs-container';
 import NavigationBar from '@/components/navigation-bar';
 import ProfileDropdown from '@/components/profile-dropdown';
