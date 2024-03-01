@@ -23,7 +23,7 @@ export default function ProfileDropdown() {
       <DropdownMenuContent data-test='profile-dropdown-content' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href='/dashboard'>
+        <Link data-test='dashboard-button' href='/dashboard'>
           <DropdownMenuItem>Dashboard</DropdownMenuItem>
         </Link>
         <Link data-test='profile-button' href='/profile'>

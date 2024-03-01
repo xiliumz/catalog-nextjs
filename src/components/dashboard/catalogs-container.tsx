@@ -94,7 +94,6 @@ export default function CatalogContainer({ children, className, ...props }: HTML
           redirect: 'follow',
         });
         const result = await response.json();
-        const data: catalogContainerProps[] = result.data.Catalog;
 
         if (response.status >= 500) {
           throw new Error('Internal server error, please contact admin');
@@ -103,6 +102,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
           throw new Error(result.errors ? result.errors : response.statusText);
         }
 
+        const data: catalogContainerProps[] = result.data.Catalog;
         data.sort((a, b) => {
           return parseInt(b.id.split('-')[5]) - parseInt(a.id.split('-')[5]);
         });

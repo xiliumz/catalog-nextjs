@@ -17,6 +17,7 @@ describe('create catalog', () => {
       cy.location('pathname').should('equal', '/dashboard');
     });
     cy.visit(`http://localhost:3000/`);
+    getDataTest('profile-dropdown').click();
     getDataTest('dashboard-button').click();
     getDataTest('create-catalog-button').click();
   });
@@ -73,7 +74,7 @@ describe('create catalog', () => {
     cy.location('pathname').should('equal', '/dashboard');
   });
 
-  it('should create catalog with one item and image', () => {
+  it('(manual) should create catalog with 1 item and image', () => {
     // Catalog container
     getDataTest('container-title-input').type('Test4');
     getDataTest('container-desc-input').type(
@@ -88,10 +89,11 @@ describe('create catalog', () => {
     getDataTest('item-file-input').selectFile('cypress/images/another_life.jpeg');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(2000);
     cy.location('pathname').should('equal', '/dashboard');
   });
 
-  it('should create catalog with three items and images', () => {
+  it('(manual) should create catalog with 3 items and images', () => {
     // Catalog container
     getDataTest('container-title-input').type('Test5');
     getDataTest('container-desc-input').type(
@@ -118,6 +120,15 @@ describe('create catalog', () => {
     getDataTest('item-file-input').eq(2).selectFile('cypress/images/another_life.jpeg');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(2000);
     cy.location('pathname').should('equal', '/dashboard');
+  });
+  after(() => {
+    getDataTest('catalog-more-card').should('have.length', 5);
+    for (let i = 1; i <= 5; i++) {
+      getDataTest('catalog-more-card').eq(0).click();
+      getDataTest('catalog-delete-card').click();
+    }
+    getDataTest('dashboard-empty').should('exist');
   });
 });

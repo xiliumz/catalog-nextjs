@@ -17,6 +17,7 @@ describe('dashboard functionality', () => {
       cy.location('pathname').should('equal', '/dashboard');
     });
     cy.visit(`http://localhost:3000/`);
+    getDataTest('profile-dropdown').click();
     getDataTest('dashboard-button').click();
     cy.wait(1000);
   });
