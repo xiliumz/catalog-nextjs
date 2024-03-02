@@ -33,43 +33,8 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   const [open, setOpenLogin] = React.useState(false);
   const [isLogin, setIsLogin] = React.useState(true);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const { toast } = useToast();
 
   React.useEffect(() => {
-    const token = Cookies.get('session');
-    if (token) {
-      var myHeaders = new Headers();
-      myHeaders.append('Authorization', token);
-
-      const getUser = async () => {
-        try {
-          const response = await fetch(`${HOST}/users/current`, {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow',
-          });
-          const result = await response.json();
-          const data = result.data;
-
-          if (response.status >= 400) {
-            throw new Error(result.errors ? result.errors : response.statusText);
-          }
-        } catch (error) {
-          if (error instanceof Error) {
-            Cookies.remove('session');
-            toast({
-              variant: 'destructive',
-              title: 'Uh oh! Something went wrong.',
-              description: error.message,
-            });
-          }
-        }
-      };
-
-      // Call the getUser function anywhere in your code
-      getUser();
-    }
-
     addCustomListener(LOGIN_EVENT, () => {
       setIsLogin(true);
     });
