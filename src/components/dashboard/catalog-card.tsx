@@ -29,6 +29,7 @@ function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardP
           }}
           variant={'secondary'}
           size='icon'
+          data-test='edit-button'
         >
           <Pencil size={20} />
         </Button>
