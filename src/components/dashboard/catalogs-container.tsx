@@ -1,14 +1,14 @@
 'use client';
 import { HOST } from '@/lib/global-var';
-import { ascendingSort, cn, descendingSort } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import Cookies from 'js-cookie';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { useRouter } from 'next/navigation';
 import { HTMLAttributes, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../ui/card';
+import { Skeleton } from '../ui/skeleton';
 import { useToast } from '../ui/use-toast';
 import CatalogCard from './catalog-card';
-import { useRouter } from 'next/navigation';
-import { Skeleton } from '../ui/skeleton';
 
 export interface catalogProps {
   id: string;
@@ -33,6 +33,16 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[] | undefined>();
   const { toast } = useToast();
   const router = useRouter();
+
+  const onShare = (id: string) => {
+    const token = Cookies.get('session');
+    const username = jwtDecode<sessionProps>(token as string).id;
+    const host = location.host;
+    navigator.clipboard.writeText(`${host}/u/${username}/${id}`);
+    toast({
+      title: 'Link Coppied!',
+    });
+  };
 
   const onView = (id: string) => {
     const token = Cookies.get('session');
@@ -146,6 +156,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
               id={val.id}
               title={val.title}
               desc={val.desc}
+              onShare={onShare}
               key={val.id}
             />
           );

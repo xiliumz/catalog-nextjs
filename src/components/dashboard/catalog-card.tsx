@@ -11,9 +11,10 @@ interface catalogCardProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onView: (id: string) => void;
+  onShare: (id: string) => void;
 }
 
-function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardProps) {
+function CatalogCard({ id, title, desc, onDelete, onEdit, onView, onShare }: catalogCardProps) {
   return (
     <Card data-test='catalog-card' className='flex items-center justify-between w-full'>
       <CardHeader className='flex-grow w-2/3'>
@@ -38,6 +39,7 @@ function CatalogCard({ id, title, desc, onDelete, onEdit, onView }: catalogCardP
             onView(id);
           }}
           onDelete={() => onDelete(id)}
+          onShare={() => onShare(id)}
         />
       </CardFooter>
     </Card>
