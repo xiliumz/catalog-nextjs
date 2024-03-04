@@ -49,6 +49,17 @@ export default function CreateForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
+    const customCode = values.customToken;
+    if (customCode) {
+      if (customCode.indexOf(' ') >= 0) {
+        toast({
+          variant: 'destructive',
+          title: 'Custom Code Error',
+          description: 'Please do not put whitespace in custom code',
+        });
+        return;
+      }
+    }
     const formData = new FormData();
     const isItemsExists = values.items.length > 0;
     const token = Cookies.get('session');
@@ -58,7 +69,7 @@ export default function CreateForm() {
     if (token) myHeader.append('Authorization', token);
     formData.append('title', values.title);
     if (values.description) formData.append('desc', values.description);
-    if (values.customToken) formData.append('customToken', values.customToken);
+    if (values.customToken) formData.append('customToken', `${user}/${values.customToken}`);
     if (isItemsExists) {
       formData.append(
         'items',
@@ -96,6 +107,59 @@ export default function CreateForm() {
         toast({
           variant: 'destructive',
           title: 'Uh oh! Something went wrong.',
+          description: error.message,
+        });
+      }
+    }
+  }
+
+  async function onCheckCode() {
+    const value = form.getValues('customToken');
+    if (!value) return;
+    if (value.indexOf(' ') >= 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Custom Code Error',
+        description: 'Please do not put whitespace in custom code',
+      });
+      return;
+    }
+    const token = Cookies.get('session');
+    if (!token) return;
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', token);
+
+    try {
+      const res = await fetch(`${HOST}/catalog/customCode`, {
+        method: 'GET',
+        headers: myHeaders,
+      });
+      const result = await res.json();
+      if (res.status >= 500) {
+        throw new Error('Internal server error, please contact admin');
+      }
+      if (!res.ok) {
+        throw new Error(result.errors ? result.errors : res.statusText);
+      }
+      const data: { custom_code: string }[] = result.data;
+      const isCodeFound = data.find((code) => code.custom_code === `${user}/${value}`);
+      if (isCodeFound) {
+        toast({
+          variant: 'destructive',
+          title: 'Code is not available',
+          description: `${value} is already used`,
+        });
+      } else {
+        toast({
+          title: 'Code is available',
+          description: `${value} can be used for catalog's code`,
+        });
+      }
+      console.log(result, isCodeFound);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          variant: 'destructive',
           description: error.message,
         });
       }
@@ -143,9 +207,9 @@ export default function CreateForm() {
                     <FormControl>
                       <Input
                         className='w-fit'
-                        data-test='container-title-input'
-                        required
+                        data-test='container-code-input'
                         placeholder='MYCODE'
+                        maxLength={50}
                         {...field}
                       />
                     </FormControl>
@@ -153,7 +217,7 @@ export default function CreateForm() {
                   </FormItem>
                 )}
               />
-              <Button type='button' size={'sm'}>
+              <Button data-test='check-button' onClick={onCheckCode} type='button' size={'sm'}>
                 Check
               </Button>
             </div>

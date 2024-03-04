@@ -74,6 +74,15 @@ describe('create catalog', () => {
     cy.location('pathname').should('equal', '/dashboard');
   });
 
+  it('should create catalog with custom code', () => {
+    getDataTest('container-title-input').type('Test code');
+    getDataTest('container-desc-input').type('test code');
+    getDataTest('container-code-input').type('TESTCODE');
+    // Submit
+    getDataTest('create-submit-button').click();
+    cy.location('pathname').should('equal', '/dashboard');
+  });
+
   it('(manual) should create catalog with 1 item and image', () => {
     // Catalog container
     getDataTest('container-title-input').type('Test4');
@@ -124,8 +133,82 @@ describe('create catalog', () => {
     cy.location('pathname').should('equal', '/dashboard');
   });
   after(() => {
-    getDataTest('catalog-more-card').should('have.length', 5);
-    for (let i = 1; i <= 5; i++) {
+    const len = 6;
+    getDataTest('catalog-more-card').should('have.length', len);
+    for (let i = 1; i <= len; i++) {
+      getDataTest('catalog-more-card').eq(0).click();
+      getDataTest('catalog-delete-card').click();
+    }
+    getDataTest('dashboard-empty').should('exist');
+  });
+});
+
+describe('fail test', () => {
+  const getDataTest = (selector: string) => {
+    return cy.getDataTest(selector);
+  };
+  before(() => {
+    cy.session('login', () => {
+      cy.visit(`http://localhost:3000/`);
+      // Open login dialog
+      cy.getDataTest('login-button').eq(0).click();
+      cy.getDataTest('login-form').should('exist');
+      // input form
+      cy.getDataTest('email-input').type('qwe@qwe.com');
+      cy.getDataTest('password-input').type('qweqwe');
+      // submit
+      cy.getDataTest('submit-login').click();
+      cy.wait(1000);
+      cy.location('pathname').should('equal', '/dashboard');
+    });
+    cy.visit(`http://localhost:3000/`);
+    getDataTest('profile-dropdown').click();
+    getDataTest('dashboard-button').click();
+    getDataTest('create-catalog-button').click();
+    getDataTest('container-title-input').type('Test before');
+    getDataTest('container-desc-input').type('test before');
+    getDataTest('container-code-input').type('FAILTEST');
+    // Submit
+    getDataTest('create-submit-button').click();
+    cy.location('pathname').should('equal', '/dashboard');
+  });
+  beforeEach(() => {
+    cy.session('login', () => {
+      cy.visit(`http://localhost:3000/`);
+      // Open login dialog
+      cy.getDataTest('login-button').eq(0).click();
+      cy.getDataTest('login-form').should('exist');
+      // input form
+      cy.getDataTest('email-input').type('qwe@qwe.com');
+      cy.getDataTest('password-input').type('qweqwe');
+      // submit
+      cy.getDataTest('submit-login').click();
+      cy.wait(1000);
+      cy.location('pathname').should('equal', '/dashboard');
+    });
+    cy.visit(`http://localhost:3000/`);
+    getDataTest('profile-dropdown').click();
+    getDataTest('dashboard-button').click();
+    getDataTest('create-catalog-button').click();
+  });
+
+  it('should fail create catalog if custom code is used', () => {
+    getDataTest('container-title-input').type('Test before');
+    getDataTest('container-desc-input').type('test before');
+    getDataTest('container-code-input').type('FAILTEST');
+
+    getDataTest('check-button').click();
+    getDataTest('toaster').should('contain.text', 'is already used');
+    cy.wait(1000);
+    getDataTest('create-submit-button').click();
+    getDataTest('toaster').should('contain.text', 'Custom code is already used. Please check it first :)');
+  });
+
+  after(() => {
+    const len = 1;
+    cy.visit('http://localhost:3000/dashboard');
+    getDataTest('catalog-more-card').should('have.length', len);
+    for (let i = 1; i <= len; i++) {
       getDataTest('catalog-more-card').eq(0).click();
       getDataTest('catalog-delete-card').click();
     }

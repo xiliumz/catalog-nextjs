@@ -170,7 +170,7 @@ describe('edit catalog', () => {
     getDataTest('view-item-desc').eq(1).should('contain.text', 'test2-desc-edited-2');
   });
   it('should delete item without images', () => {});
-
+  it("should edit catalog's custom code", () => {});
   after(() => {
     const len = 2;
     getDataTest('catalog-more-card').should('have.length', len);
@@ -181,6 +181,8 @@ describe('edit catalog', () => {
     getDataTest('dashboard-empty').should('exist');
   });
 });
+
+describe('fail test', () => {});
 
 describe('manual tests', () => {
   it('should add new item with image', () => {
