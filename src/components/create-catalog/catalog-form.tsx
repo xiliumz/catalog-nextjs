@@ -1,5 +1,5 @@
 'use client';
-import { Plus } from 'lucide-react';
+import { HelpCircle, Plus } from 'lucide-react';
 import { HTMLAttributes, useState } from 'react';
 import { FieldValues, UseFieldArrayRemove, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
 import { Button } from '../ui/button';
@@ -13,6 +13,8 @@ import { useToast } from '../ui/use-toast';
 import { getFileExt, renameFile } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { catalogProps } from '../dashboard/catalogs-container';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import useToken from '@/hooks/use-token';
 
 interface itemProps extends Omit<catalogProps, 'id'> {
   id: number | string;
@@ -22,6 +24,7 @@ interface itemProps extends Omit<catalogProps, 'id'> {
 export interface CatalogFormData extends FieldValues {
   title: string;
   description?: string;
+  customToken?: string;
   items: itemProps[];
 }
 
@@ -29,10 +32,12 @@ export default function CreateForm() {
   // 1. Define your form.
   const { toast } = useToast();
   const router = useRouter();
+  const user = useToken('id');
 
   const form = useForm<CatalogFormData>({
     defaultValues: {
       title: '',
+      customToken: '',
       description: '',
       items: [],
     },
@@ -53,6 +58,7 @@ export default function CreateForm() {
     if (token) myHeader.append('Authorization', token);
     formData.append('title', values.title);
     if (values.description) formData.append('desc', values.description);
+    if (values.customToken) formData.append('customToken', values.customToken);
     if (isItemsExists) {
       formData.append(
         'items',
@@ -108,14 +114,53 @@ export default function CreateForm() {
                 <FormItem>
                   <FormLabel>Title*</FormLabel>
                   <FormControl>
-                    <Input data-test='container-title-input' required placeholder='Catalog 1' {...field} />
+                    <Input data-test='container-title-input' required placeholder='Catalog Title' {...field} />
                   </FormControl>
                   <FormDescription>This is your catalog's title.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <br />
+            <div className='flex items-end w-fit flex-wrap gap-2 mt-2'>
+              <FormField
+                control={form.control}
+                name='customToken'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='flex items-end gap-1'>
+                      <FormLabel>Custom Code</FormLabel>
+                      <TooltipProvider delayDuration={400}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className='fill-foreground text-background' size={15} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>This is your custom code that you can share. This will be like</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <FormControl>
+                      <Input
+                        className='w-fit'
+                        data-test='container-title-input'
+                        required
+                        placeholder='MYCODE'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type='button' size={'sm'}>
+                Check
+              </Button>
+            </div>
+            <p className='text-sm font-medium leading-none text-muted-foreground my-1 ml-2'>
+              {form.watch('customToken') ? `Custom Code: ${user}/${form.watch('customToken')}` : ''}
+            </p>
+
             <FormField
               control={form.control}
               name='description'

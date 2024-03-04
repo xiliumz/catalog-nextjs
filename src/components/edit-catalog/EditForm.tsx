@@ -14,17 +14,23 @@ import { CardContent, CardFooter } from '../ui/card';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { HelpCircle } from 'lucide-react';
+import useToken from '@/hooks/use-token';
 
 export default function EditForm({ catalog, catalogId }: { catalog?: catalogContainerProps; catalogId: string }) {
   // 1. Define your form.
   const { toast } = useToast();
   const router = useRouter();
+  const user = useToken('id');
 
+  // TODO: add custom_catalog
   const form = useForm<CatalogFormData>({
     defaultValues: {
       title: catalog?.title,
-      description: catalog?.desc,
+      description: catalog?.desc || '',
       items: catalog?.catalogs,
+      customToken: catalog?.custom_code,
     },
   });
 
@@ -43,6 +49,7 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
     if (token) myHeader.append('Authorization', token);
     formData.append('title', values.title);
     if (values.description) formData.append('desc', values.description);
+    if (values.customToken) formData.append('customToken', values.customToken);
     if (isItemsExists) {
       formData.append(
         'items',
@@ -98,13 +105,52 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
                 <FormItem>
                   <FormLabel>Title*</FormLabel>
                   <FormControl>
-                    <Input data-test='container-title-input' required placeholder='Catalog 1' {...field} />
+                    <Input data-test='container-title-input' required placeholder='Catalog Title' {...field} />
                   </FormControl>
                   <FormDescription>This is your catalog's title.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className='flex items-end w-fit flex-wrap gap-2 mt-2'>
+              <FormField
+                control={form.control}
+                name='customToken'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='flex items-end gap-1'>
+                      <FormLabel>Custom Code</FormLabel>
+                      <TooltipProvider delayDuration={400}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className='fill-foreground text-background' size={15} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>This is your custom code that you can share. This will be like</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <FormControl>
+                      <Input
+                        className='w-fit'
+                        data-test='container-title-input'
+                        required
+                        placeholder='MYCODE'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type='button' size={'sm'}>
+                Check
+              </Button>
+            </div>
+            <p className='text-sm font-medium leading-none text-muted-foreground my-1 ml-2'>
+              {form.watch('customToken') ? `Custom Code: ${user}/${form.watch('customToken')}` : ''}
+            </p>
             <br />
             <FormField
               control={form.control}

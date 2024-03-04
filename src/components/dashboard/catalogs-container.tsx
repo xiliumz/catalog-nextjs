@@ -21,6 +21,7 @@ export interface catalogContainerProps {
   id: string;
   title: string;
   desc?: string;
+  custom_code?: string;
   catalogs: catalogProps[];
 }
 

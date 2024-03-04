@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 import React, { HTMLAttributes } from 'react';
 
-const containerVariants = cva('px-4 md:px-8 w-full mx-auto w-full', {
+const containerVariants = cva('md:px-8 w-full mx-auto w-full', {
   variants: {
     size: {
       xxl: 'xxl:w-[1536px]',
