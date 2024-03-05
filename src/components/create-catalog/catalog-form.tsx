@@ -15,6 +15,8 @@ import { useRouter } from 'next/navigation';
 import { catalogProps } from '../dashboard/catalogs-container';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import useToken from '@/hooks/use-token';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface itemProps extends Omit<catalogProps, 'id'> {
   id: number | string;
@@ -28,6 +30,21 @@ export interface CatalogFormData extends FieldValues {
   items: itemProps[];
 }
 
+const formSchema = z.object({
+  title: z.string().min(2).max(100),
+  description: z.string().optional(),
+  customToken: z
+    .string()
+    .max(50)
+    .regex(/^[a-zA-Z0-9]*$/g, { message: 'Please only input leter and number' }),
+  items: z
+    .object({
+      title: z.string().max(100),
+      desc: z.string(),
+    })
+    .array(),
+});
+
 export default function CreateForm() {
   // 1. Define your form.
   const { toast } = useToast();
@@ -35,6 +52,7 @@ export default function CreateForm() {
   const user = useToken('id');
 
   const form = useForm<CatalogFormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       customToken: '',
@@ -155,7 +173,6 @@ export default function CreateForm() {
           description: `${value} can be used for catalog's code`,
         });
       }
-      console.log(result, isCodeFound);
     } catch (error) {
       if (error instanceof Error) {
         toast({
@@ -185,7 +202,7 @@ export default function CreateForm() {
                 </FormItem>
               )}
             />
-            <div className='flex items-end w-fit flex-wrap gap-2 mt-2'>
+            <div className='flex w-fit flex-wrap gap-2 mt-2'>
               <FormField
                 control={form.control}
                 name='customToken'
@@ -217,7 +234,13 @@ export default function CreateForm() {
                   </FormItem>
                 )}
               />
-              <Button data-test='check-button' onClick={onCheckCode} type='button' size={'sm'}>
+              <Button
+                className='translate-y-6'
+                data-test='check-button'
+                onClick={onCheckCode}
+                type='button'
+                size={'sm'}
+              >
                 Check
               </Button>
             </div>

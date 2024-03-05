@@ -22,6 +22,7 @@ describe('edit catalog', () => {
     getDataTest('create-catalog-button').click();
     // Catalog container
     getDataTest('container-title-input').type('Test1');
+    getDataTest('container-code-input').type('SUCCESS');
     getDataTest('container-desc-input').type(
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illum animi corporis ullam sapiente consequuntur obcaecati, delectus incidunt velit rerum facere accusantium ab nulla odio nam consectetur reprehenderit neque odit omnis.'
     );

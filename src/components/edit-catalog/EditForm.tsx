@@ -17,20 +17,37 @@ import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 import useToken from '@/hooks/use-token';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-export default function EditForm({ catalog, catalogId }: { catalog?: catalogContainerProps; catalogId: string }) {
+const formSchema = z.object({
+  title: z.string().min(2).max(100),
+  description: z.string().optional(),
+  customToken: z
+    .string()
+    .max(50)
+    .regex(/^[a-zA-Z0-9]*$/g, { message: 'Please only input leter and number' }),
+  items: z
+    .object({
+      title: z.string().max(100),
+      desc: z.string(),
+    })
+    .array(),
+});
+
+export default function EditForm({ catalog }: { catalog?: catalogContainerProps }) {
   // 1. Define your form.
   const { toast } = useToast();
   const router = useRouter();
   const user = useToken('id');
 
-  // TODO: add custom_catalog
   const form = useForm<CatalogFormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: catalog?.title,
       description: catalog?.desc || '',
       items: catalog?.catalogs,
-      customToken: catalog?.custom_code,
+      customToken: catalog?.custom_code ? catalog.custom_code.split('/')[1] : '',
     },
   });
 
@@ -78,7 +95,7 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
     }
 
     try {
-      const response = await fetch(`${HOST}/catalog/update/${catalogId}`, {
+      const response = await fetch(`${HOST}/catalog/update/${catalog?.id}`, {
         method: 'PUT',
         headers: myHeader,
         body: formData,
@@ -135,7 +152,6 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
       }
       const data: { custom_code: string }[] = result.data;
       const isCodeFound = data.find((code) => code.custom_code === `${user}/${value}`);
-      console.log(result);
       if (isCodeFound) {
         toast({
           variant: 'destructive',
@@ -177,7 +193,7 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
                 </FormItem>
               )}
             />
-            <div className='flex items-end w-fit flex-wrap gap-2 mt-2'>
+            <div className='flex w-fit flex-wrap gap-2 mt-2'>
               <FormField
                 control={form.control}
                 name='customToken'
@@ -209,7 +225,13 @@ export default function EditForm({ catalog, catalogId }: { catalog?: catalogCont
                   </FormItem>
                 )}
               />
-              <Button data-test='check-button' onClick={onCheckCode} type='button' size={'sm'}>
+              <Button
+                className='translate-y-6'
+                data-test='check-button'
+                onClick={onCheckCode}
+                type='button'
+                size={'sm'}
+              >
                 Check
               </Button>
             </div>
