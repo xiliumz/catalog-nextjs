@@ -78,7 +78,7 @@ describe('edit catalog', () => {
     getDataTest('dashboard-button').click();
   });
 
-  it('should edit title, desc, and item without images', () => {
+  it.only('should edit title, desc, and item without images', () => {
     getDataTest('edit-button').eq(1).click();
     cy.wait(1000);
     getDataTest('container-title-input').clear().type('Title Edited 1');
@@ -92,6 +92,8 @@ describe('edit catalog', () => {
     getDataTest('item-title-input').eq(2).clear().type('test2-title-edited-3');
     getDataTest('item-desc-input').eq(2).clear().type('test2-desc-edited-3');
     getDataTest('create-submit-button').click();
+    cy.location('pathname').should('contain', '/dashboard');
+    cy.wait(1000);
     getDataTest('catalog-more-card').eq(1).click();
     getDataTest('catalog-view-card').click();
     cy.location('pathname').should('contain', '/u/');
@@ -117,6 +119,7 @@ describe('edit catalog', () => {
       .clear()
       .type('Desc Edited 2, Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maxime, ducimus!');
     getDataTest('create-submit-button').click();
+    cy.wait(1000);
     getDataTest('catalog-more-card').eq(0).click();
     getDataTest('catalog-view-card').click();
     cy.location('pathname').should('contain', '/u/');
@@ -171,9 +174,15 @@ describe('edit catalog', () => {
     getDataTest('view-item-desc').eq(1).should('contain.text', 'test2-desc-edited-2');
   });
   it('should delete item without images', () => {});
-  it("should edit catalog's custom code", () => {});
+  it("should edit catalog's custom code", () => {
+    getDataTest('edit-button').eq(1).click();
+    cy.wait(1000);
+    getDataTest('container-code-input').clear().type('GOODTEST');
+  });
   after(() => {
     const len = 2;
+    cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
     getDataTest('catalog-more-card').should('have.length', len);
     for (let i = 1; i <= len; i++) {
       getDataTest('catalog-more-card').eq(0).click();

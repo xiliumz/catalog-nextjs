@@ -207,6 +207,7 @@ describe('fail test', () => {
   after(() => {
     const len = 1;
     cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
     getDataTest('catalog-more-card').should('have.length', len);
     for (let i = 1; i <= len; i++) {
       getDataTest('catalog-more-card').eq(0).click();

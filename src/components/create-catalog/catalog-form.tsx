@@ -39,8 +39,10 @@ const formSchema = z.object({
     .regex(/^[a-zA-Z0-9]*$/g, { message: 'Please only input leter and number' }),
   items: z
     .object({
+      id: z.number(),
       title: z.string().max(100),
       desc: z.string(),
+      img: z.any(),
     })
     .array(),
 });
