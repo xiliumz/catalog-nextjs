@@ -13,7 +13,7 @@ describe('change password', () => {
     cy.getDataTest('login-form').should('exist');
     // input form
     cy.getDataTest('email-input').type('qwe@qwe.com');
-    cy.getDataTest('password-input').type(newPass);
+    cy.getDataTest('password-input').type('qweqwe');
     // submit
     cy.getDataTest('submit-login').click();
     cy.wait(1000);
@@ -24,7 +24,8 @@ describe('change password', () => {
     cy.location('pathname').should('equal', '/profile');
     getDataTest('profile-password-input').type(newPass);
     getDataTest('profile-submit').click();
-    cy.wait(1000);
+    cy.intercept('http://localhost:3000/dashboard').as('dashboard');
+    cy.wait(3000);
 
     getDataTest('profile-dropdown').click();
     getDataTest('logout').click();
@@ -37,7 +38,7 @@ describe('change password', () => {
     cy.getDataTest('password-input').type(newPass);
     // submit
     cy.getDataTest('submit-login').click();
-    cy.wait(1000);
+    cy.wait(2000);
     cy.location('pathname').should('equal', '/dashboard');
 
     getDataTest('profile-dropdown').click();

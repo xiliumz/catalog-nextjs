@@ -78,7 +78,7 @@ describe('edit catalog', () => {
     getDataTest('dashboard-button').click();
   });
 
-  it.only('should edit title, desc, and item without images', () => {
+  it('should edit title, desc, and item without images', () => {
     getDataTest('edit-button').eq(1).click();
     cy.wait(1000);
     getDataTest('container-title-input').clear().type('Title Edited 1');

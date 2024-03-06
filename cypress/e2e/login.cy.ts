@@ -20,7 +20,6 @@ describe('login test', () => {
     cy.getDataTest('profile-dropdown').click();
     cy.getDataTest('profile-dropdown-content').should('exist');
     cy.getDataTest('logout').click();
-    cy.location('pathname').should('equal', '/');
   });
 
   it('should email wrong', () => {

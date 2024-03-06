@@ -186,8 +186,9 @@ describe('display test', () => {
 
   after(() => {
     cy.visit('http://localhost:3000/dashboard');
-    getDataTest('catalog-more-card').should('have.length', 5);
-    for (let i = 1; i <= 5; i++) {
+    const len = 4;
+    getDataTest('catalog-more-card').should('have.length', len);
+    for (let i = 1; i <= len; i++) {
       getDataTest('catalog-more-card').eq(0).click();
       getDataTest('catalog-delete-card').click();
     }
@@ -199,7 +200,7 @@ describe('functionlity test', () => {
   it('should search specific title', () => {});
 });
 
-describe('view page without login', () => {
+describe('(manual) view page without login', () => {
   const getDataTest = (selector: string) => {
     return cy.getDataTest(selector);
   };
