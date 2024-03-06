@@ -25,7 +25,7 @@ export default function CatalogMoreButton({ onDelete, onView, onShare }: catalog
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side='top' align='end' alignOffset={-15} sideOffset={10}>
-        <DropdownMenuItem data-test='catalog-view-card' onClick={onShare}>
+        <DropdownMenuItem data-test='catalog-share-card' onClick={onShare}>
           Share
         </DropdownMenuItem>
         <DropdownMenuItem data-test='catalog-view-card' onClick={onView}>

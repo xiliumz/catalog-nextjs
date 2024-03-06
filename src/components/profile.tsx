@@ -14,7 +14,7 @@ import { useToast } from './ui/use-toast';
 
 const formSchema = z.object({
   name: z.string().max(100).optional(),
-  password: z.string().min(8).max(100).optional(),
+  password: z.string().min(6).max(100).optional(),
 });
 
 export default function ProfileForm() {

@@ -1,24 +1,22 @@
 'use client';
+import useToken from '@/hooks/use-token';
 import { HOST } from '@/lib/global-var';
-import React, { useEffect, useState } from 'react';
-import { catalogContainerProps, sessionProps } from '../dashboard/catalogs-container';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
-import { AddItem, CatalogFormData, CatalogItem } from '../create-catalog/catalog-form';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { useToast } from '../ui/use-toast';
 import { getFileExt } from '@/lib/utils';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
+import { HelpCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { UseFormProps, useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { AddItem, CatalogFormData, CatalogItem } from '../create-catalog/catalog-form';
+import { catalogContainerProps } from '../dashboard/catalogs-container';
+import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { HelpCircle } from 'lucide-react';
-import useToken from '@/hooks/use-token';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '../ui/use-toast';
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -27,15 +25,32 @@ const formSchema = z.object({
     .string()
     .max(50)
     .regex(/^[a-zA-Z0-9]*$/g, { message: 'Please only input leter and number' }),
-  items: z
-    .object({
+  items: z.array(
+    z.object({
       id: z.number(),
       title: z.string().max(100),
       desc: z.string(),
-      img: z.any(),
+      img: z.any().optional().nullable(),
+      imagePath: z.any().optional(),
     })
-    .array(),
+  ),
 });
+
+function useZodForm<TSchema extends z.ZodType>(
+  props: Omit<UseFormProps<TSchema['_input']>, 'resolver'> & {
+    schema: TSchema;
+  }
+) {
+  const form = useForm<TSchema['_input']>({
+    ...props,
+    resolver: zodResolver(props.schema, undefined, {
+      // This makes it so we can use `.transform()`s on the schema without same transform getting applied again when it reaches the server
+      raw: true,
+    }),
+  });
+
+  return form;
+}
 
 export default function EditForm({ catalog }: { catalog?: catalogContainerProps }) {
   // 1. Define your form.
@@ -43,12 +58,12 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
   const router = useRouter();
   const user = useToken('id');
 
-  const form = useForm<CatalogFormData>({
-    resolver: zodResolver(formSchema),
+  const form = useZodForm({
+    schema: formSchema,
     defaultValues: {
       title: catalog?.title,
       description: catalog?.desc || '',
-      items: catalog?.catalogs,
+      items: catalog?.catalogs && catalog.catalogs.map((cat) => ({ ...cat, id: parseInt(cat.id) })),
       customToken: catalog?.custom_code ? catalog.custom_code.split('/')[1] : '',
     },
   });
@@ -60,6 +75,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
+    console.log(values);
     const customCode = values.customToken;
     if (customCode) {
       if (customCode.indexOf(' ') >= 0) {
@@ -287,12 +303,13 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
             >
               Cancel
             </Button>
-            <input
+            <Button
               data-test='create-submit-button'
               className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'
               type='submit'
-              placeholder='Submit'
-            />
+            >
+              Submit
+            </Button>
           </CardFooter>
         </form>
       </Form>

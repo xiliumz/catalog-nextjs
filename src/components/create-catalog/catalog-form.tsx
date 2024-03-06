@@ -19,8 +19,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 interface itemProps extends Omit<catalogProps, 'id'> {
-  id: number | string;
-  img?: FileList;
+  id: number;
+  img?: FileList | any;
 }
 
 export interface CatalogFormData extends FieldValues {
@@ -310,7 +310,7 @@ export function AddItem({ ...props }: HTMLAttributes<HTMLDivElement>) {
 
 export interface catalogItemProps {
   index: number;
-  register: UseFormRegister<CatalogFormData>;
+  register: any;
   remove: UseFieldArrayRemove;
   imagePath?: string;
 }
