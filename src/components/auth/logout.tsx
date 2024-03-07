@@ -27,7 +27,7 @@ function Logout() {
       .then((response) => {
         Cookies.remove('session');
         router.push('/');
-        router.refresh();
+        window.location.reload();
       })
       .catch((error) => {
         toast({

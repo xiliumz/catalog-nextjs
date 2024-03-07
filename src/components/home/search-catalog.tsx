@@ -1,13 +1,12 @@
 'use client';
 
+import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
+import { Search } from 'lucide-react';
+import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import Loader from '../ui/loader';
 import SearchInput from '../ui/search';
-import { Search } from 'lucide-react';
-import { HOST } from '@/lib/global-var';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 const SEARCH_EVENT = 'search';
 
@@ -76,7 +75,7 @@ function SearchCatalog() {
             className={`sm:text-lg text-base py-6 sm:py-7 border-l-0 rounded-l-none border-none`}
             value={value}
             onInput={onInput}
-            onKeyUp={() => {}}
+            data-test='search-catalog'
           />
         </div>
         <SearchedList loading={loading} searched={searched} />
@@ -88,7 +87,6 @@ function SearchCatalog() {
 export default SearchCatalog;
 
 function SearchedList({ loading, searched }: { loading: boolean; searched: SearchedI[] }) {
-  const router = useRouter();
   if (loading || searched.length !== 0) {
     return (
       <div className='w-full bg-background rounded-b-2xl text-base h-fit'>
@@ -102,9 +100,9 @@ function SearchedList({ loading, searched }: { loading: boolean; searched: Searc
           searched.map(
             (data, index) =>
               index < 3 && (
-                <Link key={data.id} href={`/u/${data.user_id}/${data.id}`}>
+                <Link data-test='searched-item' key={data.id} href={`/u/${data.user_id}/${data.id}`}>
                   <div className='text-sm font-semibold leading-none py-4 px-7 capitalize hover:bg-secondary rounded-b-2xl hover:cursor-pointer'>
-                    <p>{data.title}</p>
+                    <p data-test='searched-title'>{data.title}</p>
                     <p className='font-medium leading-none text-sm text-muted-foreground mt-1 normal-case'>
                       {data.custom_code ? data.custom_code : data.id}
                     </p>
