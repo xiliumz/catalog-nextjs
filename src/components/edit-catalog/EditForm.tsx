@@ -19,14 +19,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import { useToast } from '../ui/use-toast';
 import { useState } from 'react';
 
-const KeyCodes = {
-  tab: 9,
-  comma: 188,
-  enter: 13,
-};
-
-const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
-
 const formSchema = z.object({
   title: z.string().min(2).max(100),
   description: z.string().optional(),
@@ -40,6 +32,7 @@ const formSchema = z.object({
       title: z.string().max(100),
       desc: z.string(),
       img: z.any().optional().nullable(),
+      tags: z.array(z.any()).optional(),
       imagePath: z.any().optional(),
     })
   ),
@@ -69,8 +62,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
   const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
   const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
 
-  const form = useZodForm({
-    schema: formSchema,
+  const form = useForm<CatalogFormData>({
     defaultValues: {
       title: catalog?.title,
       description: catalog?.desc || '',
@@ -85,7 +77,8 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: CatalogFormData) {
+  async function onSubmit(_: any) {
+    const values: CatalogFormData = _;
     const customCode = values.customToken;
     if (customCode) {
       if (customCode.indexOf(' ') >= 0) {
@@ -295,6 +288,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
                     setItemTags={setItemTags}
                     setTagSuggestion={setTagSuggestions}
                     tagSuggestion={tagSuggestions}
+                    tags={field.tags}
                   />
                 ))}
                 <AddItem

@@ -29,7 +29,14 @@ export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
             result.errors ? result.errors : 'An unexpected error occurred. Please contact the administrator.'
           );
         const data: catalogContainerProps = result;
-        setCatalog(data);
+        const catalogs = data.catalogs.map((_) => {
+          if (_.tags && _.tags.length > 0) {
+            return { ..._, tags: _.tags.map((val) => ({ id: val.id, text: val.name })) };
+          }
+          return { ..._ };
+        });
+        setCatalog({ ...data, catalogs });
+        console.log({ ...data, catalogs });
       } catch (e) {
         if (e instanceof Error) {
           toast({

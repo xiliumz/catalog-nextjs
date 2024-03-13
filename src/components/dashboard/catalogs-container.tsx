@@ -14,6 +14,7 @@ export interface catalogProps {
   id: string;
   title: string;
   desc?: string;
+  tags?: any[];
   imagePath?: string;
 }
 

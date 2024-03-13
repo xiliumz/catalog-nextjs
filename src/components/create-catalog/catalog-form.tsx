@@ -41,6 +41,7 @@ export interface CatalogFormData extends FieldValues {
 }
 
 export interface TagProps {
+  [x: string]: any;
   id: string;
   text: string;
 }
@@ -343,6 +344,7 @@ export interface catalogItemProps {
   setTagSuggestion?: Dispatch<SetStateAction<TagProps[]>>;
   imagePath?: string;
   tagSuggestion?: TagProps[];
+  tags?: TagProps[];
 }
 
 export function CatalogItem({
@@ -353,12 +355,13 @@ export function CatalogItem({
   imagePath,
   tagSuggestion,
   setTagSuggestion,
+  tags,
 }: catalogItemProps) {
   const [fileName, setFileName] = useState('');
-  const [tags, setTags] = useState<TagProps[]>([]);
+  const [_tags, setTags] = useState<TagProps[]>(tags || []);
 
   const handleDelete = (i: number) => {
-    const newTags = tags.filter((_, index) => index !== i);
+    const newTags = _tags.filter((_, index) => index !== i);
     setTags(newTags);
     setItemTags((val) => {
       const _newTags = val;
@@ -381,7 +384,7 @@ export function CatalogItem({
           return result;
         });
       }
-      const newTags = [...tags];
+      const newTags = [..._tags];
       newTags.push(tag);
       setTags(newTags);
       setItemTags((val) => {
@@ -390,7 +393,7 @@ export function CatalogItem({
         return new Map(_newTags);
       });
     },
-    [index, tags]
+    [index, _tags]
   );
 
   return (
@@ -415,7 +418,7 @@ export function CatalogItem({
           Tags
         </FormLabel>
         <ReactTags
-          tags={tags}
+          tags={_tags}
           suggestions={tagSuggestion}
           delimiters={delimiters}
           handleDelete={handleDelete}
@@ -431,7 +434,7 @@ export function CatalogItem({
           className='w-0 h-0 absolute -z-50'
           id={`item-tag-${index}`}
           autoFocus={true}
-          value={JSON.stringify(tags)}
+          value={JSON.stringify(_tags)}
           {...register(`items.${index}.tags` as const, {})}
         />
       </FormItem>
