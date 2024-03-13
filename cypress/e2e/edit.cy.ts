@@ -194,6 +194,13 @@ describe('edit catalog', () => {
 
 describe('fail test', () => {});
 
+describe('edit tag', () => {
+  it('should create multiple tags', () => {});
+  it('should delete tags', () => {});
+  it('should tags corresponds with the item when one of the items is deleted', () => {});
+  it('should delete and then add some tags again', () => {});
+});
+
 describe('manual tests', () => {
   it('should add new item with image', () => {
     throw new Error(

@@ -1,11 +1,4 @@
-import { cookies } from 'next/headers';
-import { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-
-export async function getSessionData(req: NextRequest) {
-  const encryptedSessionData = cookies().get('session')?.value;
-  return encryptedSessionData ? encryptedSessionData : null;
-}
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const cookie = request.cookies.get('session');

@@ -1,25 +1,35 @@
 'use client';
+import useToken from '@/hooks/use-token';
+import { HOST } from '@/lib/global-var';
+import { getFileExt } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
 import { HelpCircle, Plus } from 'lucide-react';
-import { HTMLAttributes, useState } from 'react';
-import { FieldValues, UseFieldArrayRemove, UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useState } from 'react';
+import { FieldValues, UseFieldArrayRemove, useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { catalogProps } from '../dashboard/catalogs-container';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import Cookies from 'js-cookie';
-import { HOST } from '@/lib/global-var';
-import { useToast } from '../ui/use-toast';
-import { getFileExt, renameFile } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { catalogProps } from '../dashboard/catalogs-container';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import useToken from '@/hooks/use-token';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '../ui/use-toast';
+import { WithContext as ReactTags } from 'react-tag-input';
+
+const KeyCodes = {
+  tab: 9,
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
 
 interface itemProps extends Omit<catalogProps, 'id'> {
   id: number;
+  tags?: TagProps[];
   img?: FileList | any;
 }
 
@@ -28,6 +38,11 @@ export interface CatalogFormData extends FieldValues {
   description?: string;
   customToken?: string;
   items: itemProps[];
+}
+
+export interface TagProps {
+  id: string;
+  text: string;
 }
 
 const formSchema = z.object({
@@ -42,7 +57,8 @@ const formSchema = z.object({
       id: z.number(),
       title: z.string().max(100),
       desc: z.string(),
-      img: z.any(),
+      tags: z.string().optional(),
+      img: z.any().optional(),
     })
     .array(),
 });
@@ -52,6 +68,8 @@ export default function CreateForm() {
   const { toast } = useToast();
   const router = useRouter();
   const user = useToken('id');
+  const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
+  const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
 
   const form = useForm<CatalogFormData>({
     resolver: zodResolver(formSchema),
@@ -94,16 +112,17 @@ export default function CreateForm() {
       formData.append(
         'items',
         JSON.stringify(
-          values.items.map((item) => {
+          values.items.map((item, i) => {
             const image = item.img?.item(0);
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
             }
-            return { id: item.id.toString(), title: item.title, desc: item.desc };
+            return { id: item.id.toString(), title: item.title, desc: item.desc, tags: itemTags.get(i) };
           })
         )
       );
+      // console.log(JSON.parse(formData.get('items')));
     }
 
     try {
@@ -269,7 +288,15 @@ export default function CreateForm() {
               <FormLabel className='mb-5'>Create Catalog's items</FormLabel>
               <div className='grid gap-4 md:grid-cols-3 sm:grid-cols-2 mb-2'>
                 {items.fields.map((field, index) => (
-                  <CatalogItem key={field.id} index={index} register={form.register} remove={items.remove} />
+                  <CatalogItem
+                    key={field.id}
+                    index={index}
+                    register={form.register}
+                    remove={items.remove}
+                    setItemTags={setItemTags}
+                    setTagSuggestion={setTagSuggestions}
+                    tagSuggestion={tagSuggestions}
+                  />
                 ))}
                 <AddItem
                   data-test='add-catalog-item-button'
@@ -312,11 +339,59 @@ export interface catalogItemProps {
   index: number;
   register: any;
   remove: UseFieldArrayRemove;
+  setItemTags: Dispatch<SetStateAction<Map<number, TagProps[]>>>;
+  setTagSuggestion?: Dispatch<SetStateAction<TagProps[]>>;
   imagePath?: string;
+  tagSuggestion?: TagProps[];
 }
 
-export function CatalogItem({ index, register, remove, imagePath }: catalogItemProps) {
+export function CatalogItem({
+  index,
+  register,
+  remove,
+  setItemTags,
+  imagePath,
+  tagSuggestion,
+  setTagSuggestion,
+}: catalogItemProps) {
   const [fileName, setFileName] = useState('');
+  const [tags, setTags] = useState<TagProps[]>([]);
+
+  const handleDelete = (i: number) => {
+    const newTags = tags.filter((_, index) => index !== i);
+    setTags(newTags);
+    setItemTags((val) => {
+      const _newTags = val;
+      _newTags.set(index, newTags);
+      return new Map(_newTags);
+    });
+  };
+
+  const handleAddition = useCallback(
+    (tag: TagProps) => {
+      if (setTagSuggestion) {
+        setTagSuggestion((val) => {
+          const newSuggestion = [...val];
+          newSuggestion.push(tag);
+          const result = newSuggestion.filter(function (v, i, self) {
+            // It returns the index of the first
+            // instance of each value
+            return i == self.indexOf(v);
+          });
+          return result;
+        });
+      }
+      const newTags = [...tags];
+      newTags.push(tag);
+      setTags(newTags);
+      setItemTags((val) => {
+        const _newTags = val;
+        _newTags.set(index, newTags);
+        return new Map(_newTags);
+      });
+    },
+    [index, tags]
+  );
 
   return (
     <div
@@ -336,10 +411,35 @@ export function CatalogItem({ index, register, remove, imagePath }: catalogItemP
       </FormItem>
 
       <FormItem className='w-full px-4'>
+        <FormLabel className='text-sm font-medium leading-none' htmlFor={`item-tag-${index}`}>
+          Tags
+        </FormLabel>
+        <ReactTags
+          tags={tags}
+          suggestions={tagSuggestion}
+          delimiters={delimiters}
+          handleDelete={handleDelete}
+          handleAddition={handleAddition}
+          inputFieldPosition='bottom'
+          autocomplete
+          allowDragDrop={false}
+          autofocus={false}
+          maxLength={10}
+        />
+        <Input
+          data-test='item-tag-input'
+          className='w-0 h-0 absolute -z-50'
+          id={`item-tag-${index}`}
+          autoFocus={true}
+          value={JSON.stringify(tags)}
+          {...register(`items.${index}.tags` as const, {})}
+        />
+      </FormItem>
+
+      <FormItem className='w-full px-4'>
         <FormLabel htmlFor={`item-value${index}`}>Description</FormLabel>
         <Textarea
           data-test='item-desc-input'
-          required
           className='my-2 resize-y'
           id={`item-value${index}`}
           placeholder='Description'
@@ -381,6 +481,18 @@ export function CatalogItem({ index, register, remove, imagePath }: catalogItemP
         type='button'
         onClick={() => {
           remove(index);
+          setItemTags((val) => {
+            const _ = [...val.entries()].filter((_val) => _val[0] !== index);
+            const _newTags: [number, TagProps[]][] = _.map((_val, i) => {
+              return [i, _val[1]];
+            });
+
+            const _val = new Map(_newTags);
+            return _val;
+          });
+          if (setTagSuggestion) {
+            setTagSuggestion((val) => val.filter((_, i) => i !== index));
+          }
         }}
         className='text-destructive/80 font-semibold hover:text-destructive hover:font-bold mt-auto'
       >

@@ -8,7 +8,7 @@ import { HelpCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { UseFormProps, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { AddItem, CatalogFormData, CatalogItem } from '../create-catalog/catalog-form';
+import { AddItem, CatalogFormData, CatalogItem, TagProps } from '../create-catalog/catalog-form';
 import { catalogContainerProps } from '../dashboard/catalogs-container';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
@@ -17,6 +17,15 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
+import { useState } from 'react';
+
+const KeyCodes = {
+  tab: 9,
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -36,7 +45,7 @@ const formSchema = z.object({
   ),
 });
 
-function useZodForm<TSchema extends z.ZodType>(
+export function useZodForm<TSchema extends z.ZodType>(
   props: Omit<UseFormProps<TSchema['_input']>, 'resolver'> & {
     schema: TSchema;
   }
@@ -57,6 +66,8 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
   const { toast } = useToast();
   const router = useRouter();
   const user = useToken('id');
+  const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
+  const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
 
   const form = useZodForm({
     schema: formSchema,
@@ -75,7 +86,6 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
-    console.log(values);
     const customCode = values.customToken;
     if (customCode) {
       if (customCode.indexOf(' ') >= 0) {
@@ -100,13 +110,13 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
       formData.append(
         'items',
         JSON.stringify(
-          values.items.map((item) => {
+          values.items.map((item, i) => {
             const image = item.img?.item(0);
             if (image) {
               const ext = getFileExt(image.name);
               formData.append('images', image, `${item.id}.${ext}`);
             }
-            return { id: item.id.toString(), title: item.title, desc: item.desc };
+            return { id: item.id.toString(), title: item.title, desc: item.desc, tags: itemTags.get(i) };
           })
         )
       );
@@ -282,6 +292,9 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
                     register={form.register}
                     remove={items.remove}
                     imagePath={field.imagePath}
+                    setItemTags={setItemTags}
+                    setTagSuggestion={setTagSuggestions}
+                    tagSuggestion={tagSuggestions}
                   />
                 ))}
                 <AddItem

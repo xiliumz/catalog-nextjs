@@ -204,6 +204,13 @@ describe('fail test', () => {
     getDataTest('toaster').should('contain.text', 'Custom code is already used. Please check it first :)');
   });
 
+  describe('edit tag', () => {
+    it('should create multiple tags', () => {});
+    it('should delete tags', () => {});
+    it('should tags corresponds with the item when one of the items is deleted', () => {});
+    it('should delete and then add some tags again', () => {});
+  });
+
   after(() => {
     const len = 1;
     cy.visit('http://localhost:3000/dashboard');

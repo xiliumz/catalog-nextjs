@@ -2,7 +2,7 @@ import React from 'react';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 
-export interface tagProps {
+interface tagProps {
   id: string;
   tag: string;
 }
