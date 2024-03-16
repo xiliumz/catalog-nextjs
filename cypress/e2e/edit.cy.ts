@@ -239,7 +239,35 @@ describe.only('create and edit tag', () => {
       },
     ],
   };
-  const editedCatalog2 = { ...editedCatalog1 };
+  const editedCatalog2: editCatalogProps = {
+    ...editedCatalog1,
+    editedItem: [
+      null,
+      {
+        title: 'Test 1-3 Edited 2',
+        desc: 'Desc 1-3 Edited 2',
+        tags: ['Nothing'],
+      },
+    ],
+  };
+  const editedCatalog3: editCatalogProps = {
+    ...editedCatalog1,
+    editedItem: [
+      {
+        title: 'Test 1-1 edited 3',
+        desc: 'Lorem 1-1 edited 3',
+        tags: ['Halow', 'Hellno'],
+      },
+      null,
+    ],
+    addedItem: [
+      {
+        title: 'Test 1-4 edited 3',
+        desc: 'Lorem 1-4 edited 3',
+        tags: ['Halow', 'Hellno', 'Hehehaw'],
+      },
+    ],
+  };
   before(() => {
     cy.login();
     cy.createCatalog(initCatalog);
@@ -280,7 +308,60 @@ describe.only('create and edit tag', () => {
       ],
     });
   });
-  it.skip('should modify some tags (not all item are modified)', () => {});
+  it('should modify some tags (not all item are modified)', () => {
+    cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.editCatalog(editedCatalog2);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.checkCatalog({
+      ...editedCatalog2,
+      item: [
+        {
+          title: 'Test 1-1 edited',
+          desc: 'Lorem 1-1 edited',
+          tags: ['Halow', 'Hellno', 'Warudo'],
+        },
+        {
+          title: 'Test 1-3 Edited 2',
+          desc: 'Desc 1-3 Edited 2',
+          tags: ['Nothing'],
+        },
+      ],
+    });
+  });
+  it('should add item with tag an no tag', () => {
+    cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.editCatalog(editedCatalog3);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.checkCatalog({
+      ...editedCatalog3,
+      item: [
+        {
+          title: 'Test 1-1 edited 3',
+          desc: 'Lorem 1-1 edited 3',
+          tags: ['Halow', 'Hellno'],
+        },
+        {
+          title: 'Test 1-2 edited',
+          desc: 'Lorem 1-2 edited',
+          tags: ['Haloo', 'Hellnoo', 'Warudo', 'Warudow'],
+        },
+        {
+          title: 'Test 1-3 edited',
+          desc: 'Lorem 1-3 edited',
+          tags: ['Halow', 'Hellno', 'Warudo', 'Naisu'],
+        },
+        {
+          title: 'Test 1-4 edited 3',
+          desc: 'Lorem 1-4 edited 3',
+          tags: ['Halow', 'Hellno', 'Hehehaw'],
+        },
+      ],
+    });
+  });
 
   after(() => {
     cy.login();

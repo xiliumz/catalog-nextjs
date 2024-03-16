@@ -124,19 +124,6 @@ Cypress.Commands.add('editCatalog', (option) => {
   cy.getDataTest('container-title-input').clear().type(option.title);
 
   if (option.desc) cy.getDataTest('container-desc-input').clear().type(option.desc);
-  if (option.addedItem) {
-    option.addedItem.map((v, index) => {
-      cy.getDataTest('add-catalog-item-button').click();
-      cy.getDataTest('catalog-item').eq(index).should('exist');
-      cy.getDataTest('item-title-input').eq(index).clear().type(v.title);
-      if (v.desc) cy.getDataTest('item-desc-input').eq(index).clear().type(v.desc);
-      if (v.imagePath) cy.getDataTest('item-file-input').eq(index).selectFile(v.imagePath);
-      if (v.tags && v.tags.length > 0)
-        v.tags.map((tag) => {
-          cy.get(`[data-testid=input]`).eq(index).clear().type(`${tag}{enter}`);
-        });
-    });
-  }
   if (option.deletedItemIndex) {
     option.deletedItemIndex.forEach((num) => {
       cy.getDataTest('delete-item-button').eq(num).click();
@@ -163,6 +150,19 @@ Cypress.Commands.add('editCatalog', (option) => {
         });
         item.tags.forEach((tag) => cy.addTag(tag, i));
       }
+    });
+  }
+  if (option.addedItem) {
+    option.addedItem.map((v, index) => {
+      cy.getDataTest('add-catalog-item-button').click();
+      cy.getDataTest('catalog-item').last().should('exist');
+      cy.getDataTest('item-title-input').last().clear().type(v.title);
+      if (v.desc) cy.getDataTest('item-desc-input').last().clear().type(v.desc);
+      if (v.imagePath) cy.getDataTest('item-file-input').last().selectFile(v.imagePath);
+      if (v.tags && v.tags.length > 0)
+        v.tags.map((tag) => {
+          cy.get(`[data-testid=input]`).last().clear().type(`${tag}{enter}`);
+        });
     });
   }
   if (_submit === false) {
