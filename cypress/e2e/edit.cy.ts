@@ -80,7 +80,7 @@ describe('edit catalog', () => {
 
   it('should edit title, desc, and item without images', () => {
     getDataTest('edit-button').eq(1).click();
-    cy.wait(1000);
+    cy.wait(2000);
     getDataTest('container-title-input').clear().type('Title Edited 1');
     getDataTest('container-desc-input')
       .clear()
@@ -196,11 +196,96 @@ describe('edit catalog', () => {
 
 describe('fail test', () => {});
 
-describe('edit tag', () => {
-  it('should create multiple tags', () => {});
-  it('should delete tags', () => {});
-  it('should tags corresponds with the item when one of the items is deleted', () => {});
-  it('should delete and then add some tags again', () => {});
+describe.only('create and edit tag', () => {
+  const initCatalog = {
+    title: 'Test 1',
+    desc: 'Lorem ipsum',
+    item: [
+      {
+        title: 'Test 1-1',
+        desc: 'Lorem 1-1',
+        tags: ['Halo', 'Hello', 'World'],
+      },
+      {
+        title: 'Test 2-2',
+        desc: 'Lorem 2-2',
+        tags: ['Haloo', 'Helloo', 'Worldo'],
+      },
+      {
+        title: 'Test 3-3',
+        desc: 'Lorem 3-3',
+        tags: ['Halow', 'Hellow', 'Worldw'],
+      },
+    ],
+  };
+  const editedCatalog1 = {
+    title: 'Test 1 edited',
+    desc: 'Lorem ipsum edited',
+    editedItem: [
+      {
+        title: 'Test 1-1 edited',
+        desc: 'Lorem 1-1 edited',
+        tags: ['Halow', 'Hellno', 'Warudo'],
+      },
+      {
+        title: 'Test 1-2 edited',
+        desc: 'Lorem 1-2 edited',
+        tags: ['Haloo', 'Hellnoo', 'Warudo', 'Warudow'],
+      },
+      {
+        title: 'Test 1-3 edited',
+        desc: 'Lorem 1-3 edited',
+        tags: ['Halow', 'Hellno', 'Warudo', 'Naisu'],
+      },
+    ],
+  };
+  const editedCatalog2 = { ...editedCatalog1 };
+  before(() => {
+    cy.login();
+    cy.createCatalog(initCatalog);
+  });
+  beforeEach(() => {
+    cy.login();
+  });
+  it('should create multiple tags', () => {
+    cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.checkCatalog(initCatalog);
+    cy.editCatalog(editedCatalog1);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.checkCatalog({ ...editedCatalog1, item: editedCatalog1.editedItem });
+  });
+  it('should tags corresponds with the item when one of the items is deleted', () => {
+    cy.visit('http://localhost:3000/dashboard');
+    cy.wait(1000);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.deleteItem([1]);
+    cy.getDataTest('create-submit-button').click();
+    cy.wait(1000);
+    cy.getDataTest('edit-button').eq(0).click();
+    cy.checkCatalog({
+      ...editedCatalog1,
+      item: [
+        {
+          title: 'Test 1-1 edited',
+          desc: 'Lorem 1-1 edited',
+          tags: ['Halow', 'Hellno', 'Warudo'],
+        },
+        {
+          title: 'Test 1-3 edited',
+          desc: 'Lorem 1-3 edited',
+          tags: ['Halow', 'Hellno', 'Warudo', 'Naisu'],
+        },
+      ],
+    });
+  });
+  it.skip('should modify some tags (not all item are modified)', () => {});
+
+  after(() => {
+    cy.login();
+    cy.deleteCatalog(1);
+  });
 });
 
 describe.skip('manual tests', () => {
@@ -214,3 +299,20 @@ describe.skip('manual tests', () => {
     throw new Error('Create manual test where (title, desc, all item with image) and replace 2 image');
   });
 });
+
+// it.only('should first', () => {
+//   cy.login();
+//   cy.visit('http://localhost:3000/dashboard');
+//   cy.getDataTest('edit-button').click();
+//   cy.wait(1000);
+//   cy.editCatalog({
+//     title: 'Hello world',
+//     editedItem: [
+//       {
+//         title: 'Halo',
+//         tags: ['Wkkwk'],
+//       },
+//     ],
+//     submit: false,
+//   });
+// });

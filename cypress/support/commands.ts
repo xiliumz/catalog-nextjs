@@ -16,7 +16,8 @@ interface createCatalogProps {
 
 interface editCatalogProps extends Omit<createCatalogProps, 'item'> {
   addedItem?: itemProps[];
-  editedItem?: itemProps[];
+  editedItem?: (itemProps | null)[];
+  deletedItemIndex?: number[];
 }
 
 declare namespace Cypress {
@@ -28,8 +29,9 @@ declare namespace Cypress {
     deleteCatalog(total?: number): void;
     dashboardMoreButton(option: 'delete' | 'share' | 'view', index?: number): void;
     editCatalog(option: editCatalogProps): void;
-    addTag(tag: string): void;
+    addTag(tag: string, i?: number): void;
     checkCatalog(option: createCatalogProps): void;
+    deleteItem(indexes: number[]): void;
   }
 }
 
@@ -47,12 +49,12 @@ Cypress.Commands.add('createCatalog', (option) => {
     option.item.map((v, index) => {
       cy.getDataTest('add-catalog-item-button').click();
       cy.getDataTest('catalog-item').should('exist');
-      cy.getDataTest('item-title-input').type(v.title);
-      if (v.desc) cy.getDataTest('item-desc-input').type(v.desc);
+      cy.getDataTest('item-title-input').eq(index).type(v.title);
+      if (v.desc) cy.getDataTest('item-desc-input').eq(index).type(v.desc);
       if (v.imagePath) cy.getDataTest('item-file-input').eq(index).selectFile(v.imagePath);
       if (v.tags && v.tags.length > 0)
         v.tags.map((tag) => {
-          cy.get(`[data-testid=input]`).type(`${tag}{enter}`);
+          cy.get(`[data-testid=input]`).eq(index).type(`${tag}{enter}`);
         });
     });
   }
@@ -125,14 +127,19 @@ Cypress.Commands.add('editCatalog', (option) => {
   if (option.addedItem) {
     option.addedItem.map((v, index) => {
       cy.getDataTest('add-catalog-item-button').click();
-      cy.getDataTest('catalog-item').should('exist');
-      cy.getDataTest('item-title-input').clear().type(v.title);
-      if (v.desc) cy.getDataTest('item-desc-input').clear().type(v.desc);
+      cy.getDataTest('catalog-item').eq(index).should('exist');
+      cy.getDataTest('item-title-input').eq(index).clear().type(v.title);
+      if (v.desc) cy.getDataTest('item-desc-input').eq(index).clear().type(v.desc);
       if (v.imagePath) cy.getDataTest('item-file-input').eq(index).selectFile(v.imagePath);
       if (v.tags && v.tags.length > 0)
         v.tags.map((tag) => {
-          cy.get(`[data-testid=input]`).clear().type(`${tag}{enter}`);
+          cy.get(`[data-testid=input]`).eq(index).clear().type(`${tag}{enter}`);
         });
+    });
+  }
+  if (option.deletedItemIndex) {
+    option.deletedItemIndex.forEach((num) => {
+      cy.getDataTest('delete-item-button').eq(num).click();
     });
   }
   if (option.editedItem) {
@@ -141,10 +148,10 @@ Cypress.Commands.add('editCatalog', (option) => {
         throw new Error('Edited item should have the same length with the existing items');
     });
     option.editedItem.forEach((item, i) => {
-      cy.getDataTest('item-title-input').clear().type(item.title);
-      if (item.desc) cy.getDataTest('item-desc-input').clear().type(item.desc);
+      if (item === null) return;
+      cy.getDataTest('item-title-input').eq(i).clear().type(item.title);
+      if (item.desc) cy.getDataTest('item-desc-input').eq(i).clear().type(item.desc);
       if (item.tags) {
-        console.log(Cypress.env('tagsLength'));
         cy.get(`:nth-child(${i + 1}) > :nth-child(2) > .ReactTags__tags > .ReactTags__selected > `).then((val) => {
           for (let index = 0; index < val.length; index++) {
             cy.get(
@@ -154,7 +161,7 @@ Cypress.Commands.add('editCatalog', (option) => {
             ).click();
           }
         });
-        item.tags.forEach((tag) => cy.addTag(tag));
+        item.tags.forEach((tag) => cy.addTag(tag, i));
       }
     });
   }
@@ -166,8 +173,8 @@ Cypress.Commands.add('editCatalog', (option) => {
   cy.location('pathname').should('equal', '/dashboard');
 });
 
-Cypress.Commands.add('addTag', (tag) => {
-  cy.get(`[data-testid=input]`).type(`${tag}{enter}`);
+Cypress.Commands.add('addTag', (tag, i = 0) => {
+  cy.get(`[data-testid=input]`).eq(i).type(`${tag}{enter}`);
 });
 
 Cypress.Commands.add('checkCatalog', (option) => {
@@ -180,12 +187,23 @@ Cypress.Commands.add('checkCatalog', (option) => {
       cy.getDataTest('item-title-input').eq(index).should('contain.value', v.title);
       if (v.desc) cy.getDataTest('item-desc-input').eq(index).should('contain.value', v.desc);
       if (v.imagePath) cy.getDataTest('item-file-input').eq(index).selectFile(v.imagePath);
-      if (v.tags && v.tags.length > 0)
+      if (v.tags && v.tags.length > 0) {
+        v.tags.sort();
         v.tags.map((tag, i) => {
           cy.get(`:nth-child(${index + 1}) > :nth-child(2) > .ReactTags__tags > .ReactTags__selected > `)
             .eq(i)
             .should('contain.text', tag);
         });
+      }
     });
   }
+});
+
+Cypress.Commands.add('deleteItem', (indexes) => {
+  const _i = [...indexes.sort().reverse()];
+  if (_i.length === 0) return;
+  cy.getDataTest('catalog-item').eq(_i[0]).should('exist');
+  _i.forEach((_) => {
+    cy.getDataTest('delete-item-button').eq(_).click();
+  });
 });

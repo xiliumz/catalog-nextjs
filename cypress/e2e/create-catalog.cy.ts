@@ -199,16 +199,9 @@ describe('fail test', () => {
 
     getDataTest('check-button').click();
     getDataTest('toaster').should('contain.text', 'is already used');
-    cy.wait(1000);
+    cy.wait(5000);
     getDataTest('create-submit-button').click();
     getDataTest('toaster').should('contain.text', 'Custom code is already used. Please check it first :)');
-  });
-
-  describe('edit tag', () => {
-    it('should create multiple tags', () => {});
-    it('should delete tags', () => {});
-    it('should tags corresponds with the item when one of the items is deleted', () => {});
-    it('should delete and then add some tags again', () => {});
   });
 
   after(() => {

@@ -479,6 +479,7 @@ export function CatalogItem({
       </FormItem>
 
       <Button
+        data-test='delete-item-button'
         size={'sm'}
         variant={'ghost'}
         type='button'
