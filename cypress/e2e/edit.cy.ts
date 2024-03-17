@@ -266,6 +266,10 @@ describe.only('create and edit tag', () => {
         desc: 'Lorem 1-4 edited 3',
         tags: ['Halow', 'Hellno', 'Hehehaw'],
       },
+      {
+        title: 'Test 1-5 edited 3',
+        desc: 'Lorem 1-5 edited 3',
+      },
     ],
   };
   before(() => {
@@ -345,19 +349,18 @@ describe.only('create and edit tag', () => {
           tags: ['Halow', 'Hellno'],
         },
         {
-          title: 'Test 1-2 edited',
-          desc: 'Lorem 1-2 edited',
-          tags: ['Haloo', 'Hellnoo', 'Warudo', 'Warudow'],
-        },
-        {
-          title: 'Test 1-3 edited',
-          desc: 'Lorem 1-3 edited',
-          tags: ['Halow', 'Hellno', 'Warudo', 'Naisu'],
+          title: 'Test 1-3 Edited 2',
+          desc: 'Desc 1-3 Edited 2',
+          tags: ['Nothing'],
         },
         {
           title: 'Test 1-4 edited 3',
           desc: 'Lorem 1-4 edited 3',
           tags: ['Halow', 'Hellno', 'Hehehaw'],
+        },
+        {
+          title: 'Test 1-5 edited 3',
+          desc: 'Lorem 1-5 edited 3',
         },
       ],
     });
