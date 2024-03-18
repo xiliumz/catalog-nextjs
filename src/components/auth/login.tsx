@@ -12,20 +12,19 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { setSession } from '@/features/userSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import Google from '../ui/google';
 import { useToast } from '../ui/use-toast';
-import { RegisterForm } from './register-dialog';
+import { RegisterForm } from './register';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -34,14 +33,8 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   const [open, setOpenLogin] = React.useState(false);
   const [isLogin, setIsLogin] = React.useState(true);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const session = useAppSelector((s) => s.user.session);
-  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    dispatch(setSession(Cookies.get('session') || ''));
-    // TODO: If session exists, try to fetch getUser() to check if the token valid,
-    // if it works then place the response into user's store
-
     addCustomListener(LOGIN_EVENT, () => {
       setIsLogin(true);
     });
@@ -54,22 +47,19 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
     return (
       <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
         <DialogTrigger asChild>
-          {/* TODO: Fix on click */}
           <Button
             {...props}
             onClick={() => {
-              if (!session) {
-                emitEvent(LOGIN_EVENT);
-                return;
-              }
+              emitEvent(LOGIN_EVENT);
             }}
             className={className}
             variant={variant ? variant : 'outline'}
+            data-test='login-button'
           >
-            {!session ? `Log in` : `Dashboard`}
+            Log in
           </Button>
         </DialogTrigger>
-        <DialogContent className='sm:max-w-[425px]'>
+        <DialogContent data-test='login-dialog' className='sm:max-w-[425px]'>
           <div className='px-3 py-6'>
             <DialogHeader className='mb-10 text-muted-foreground'>
               <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
@@ -84,19 +74,15 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
   return (
     <Drawer open={open} onOpenChange={setOpenLogin}>
       <DrawerTrigger asChild>
-        {/* TODO: Fix on click */}
         <Button
           {...props}
           className={className}
           onClick={() => {
-            if (!session) {
-              emitEvent(LOGIN_EVENT);
-              return;
-            }
+            emitEvent(LOGIN_EVENT);
           }}
           variant={variant ? variant : 'outline'}
         >
-          {!session ? `Log in` : `Dashboard`}
+          Log in
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -117,7 +103,6 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -140,31 +125,45 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       password: values.password,
     });
 
-    fetch(`${HOST}/users/login`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    })
-      .then((response) => {
-        if (response.status >= 500) throw new Error('Internal server error, please contact admin');
-        return response.json();
-      })
-      .then((result: any) => {
+    const login = async () => {
+      try {
+        const response = await fetch(`${HOST}/users/login`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow',
+        });
+        const result = await response.json();
+
+        if (response.status >= 500) {
+          throw new Error('Internal server error, please contact admin');
+        }
+        if (response.status >= 400) {
+          throw new Error(result.errors ? result.errors : response.statusText);
+        }
+
         const token = result.data.token;
-        Cookies.set('session', token);
-        dispatch(setSession(token));
+        const decoded = jwtDecode(token);
+        const exp = Math.ceil(((decoded.exp as number) - (decoded.iat as number)) / (3600 * 24));
+
+        Cookies.set('session', token, {
+          expires: exp ? exp : 7,
+          sameSite: 'Strict',
+          secure: true,
+        });
         router.push('/dashboard');
-      })
-      .catch((error) => {
+      } catch (error) {
         if (error instanceof Error) {
+          Cookies.remove('session');
           toast({
             variant: 'destructive',
             title: 'Uh oh! Something went wrong.',
             description: error.message,
           });
         }
-      });
+      }
+    };
+    login();
   }
 
   return (
@@ -174,7 +173,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       </Button>
       <DialogDescription className='text-center mt-6 mb-2'>Or</DialogDescription>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form data-test='login-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
             control={form.control}
             name='email'
@@ -182,9 +181,15 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your email' type='email' {...field} />
+                  <Input
+                    className='text-base py-6'
+                    placeholder='Enter your email'
+                    type='email'
+                    data-test='email-input'
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage data-test='form-message' />
               </FormItem>
             )}
           />
@@ -196,13 +201,19 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your password' type='password' {...field} />
+                  <Input
+                    className='text-base py-6'
+                    placeholder='Enter your password'
+                    type='password'
+                    data-test='password-input'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className='w-full' type='submit'>
+          <Button className='w-full' type='submit' data-test='submit-login'>
             Log in
           </Button>
         </form>
@@ -215,6 +226,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             setIsLogin(false);
           }}
           variant='link'
+          data-test='register-button-login'
         >
           Create one
         </Button>

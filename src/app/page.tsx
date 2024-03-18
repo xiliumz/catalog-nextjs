@@ -1,40 +1,21 @@
-import { LoginDrawerDialog } from '@/components/auth/login-dialog';
-import RegisterDrawerDialog from '@/components/auth/register-dialog';
+import LogginButtonWrapper from '@/components/auth/login-button-wrapper';
+import { WaveBackground } from '@/components/background';
 import FooterHome from '@/components/home/footer';
 import SearchCatalog from '@/components/home/search-catalog';
 import NavigationBar from '@/components/navigation-bar';
 import { ModeToggle } from '@/components/toggle-theme';
 import Container from '@/components/ui/container';
 import { Toaster } from '@/components/ui/toaster';
-import { TypographySmall } from '@/components/ui/typhography';
 
 export default function Home() {
   return (
     <>
-      <svg
-        xmlns='http://www.w3.org/2000/svg'
-        version='1.1'
-        className='absolute -z-10 bottom-0'
-        preserveAspectRatio='none'
-        viewBox='0 0 1440 560'
-      >
-        <g mask='url("#SvgjsMask1229")' fill='none'>
-          <path
-            d='M 0,292 C 96,255.4 288,98.2 480,109 C 672,119.8 768,314.6 960,346 C 1152,377.4 1344,282 1440,266L1440 560L0 560z'
-            fill='rgba(37, 100, 235, 0.07)'
-          ></path>
-        </g>
-        <defs>
-          <mask id='SvgjsMask1229'>
-            <rect width='1440' height='560' fill='#ffffff'></rect>
-          </mask>
-        </defs>
-      </svg>
+      <WaveBackground />
       <div className='min-h-[100vh] max-h-[100vh] flex flex-col overflow-hidden'>
         <NavigationBar>
           <div className='flex justify-center items-center'>
             <ModeToggle />
-            <LoginDrawerDialog size='sm' variant='ghost' />
+            <LogginButtonWrapper />
           </div>
         </NavigationBar>
         <Container size={'lg'} className='flex-1 flex flex-col'>

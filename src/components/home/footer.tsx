@@ -1,21 +1,43 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TypographySmall } from '../ui/typhography';
-import RegisterDrawerDialog from '../auth/register-dialog';
-import { LoginDrawerDialog } from '../auth/login-dialog';
+import RegisterDrawerDialog from '../auth/register';
+import { LoginDrawerDialog } from '../auth/login';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 function FooterHome() {
+  const router = useRouter();
+  const [session, setSession] = useState<string | undefined>();
+
+  useEffect(() => {
+    const token = Cookies.get('session');
+    setSession(token);
+  }, []);
+
+  if (session) {
+    return (
+      <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
+        Prefer to create catalogs instead? Click here to go to{' '}
+        <Button
+          className='p-0'
+          variant='link'
+          onClick={() => {
+            router.push('/dashboard');
+          }}
+          data-test='dashboard-button-footer'
+        >
+          dashboard
+        </Button>
+      </TypographySmall>
+    );
+  }
   return (
     <TypographySmall className='text-center text-muted-foreground -translate-y-16 -z-10'>
       Prefer to create catalogs instead? Click here to{' '}
-      <RegisterDrawerDialog className='p-0 text-primary/60' variant='link'>
-        register
-      </RegisterDrawerDialog>{' '}
-      or{' '}
-      <LoginDrawerDialog className='p-0 text-primary/60' variant='link'>
-        log in
-      </LoginDrawerDialog>
-      .
+      <RegisterDrawerDialog className='p-0 text-primary/60' variant='link' /> or{' '}
+      <LoginDrawerDialog className='p-0 text-primary/60' variant='link' />.
     </TypographySmall>
   );
 }

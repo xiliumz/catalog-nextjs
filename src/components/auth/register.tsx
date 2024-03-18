@@ -12,7 +12,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
-import { LoginForm } from './login-dialog';
+import { LoginForm } from './login';
 
 interface RegisterProps extends ButtonProps {}
 
@@ -40,8 +40,9 @@ function RegisterDrawerDialog({ children, className, variant, ...props }: Regist
             }}
             className={className}
             variant={variant ? variant : 'outline'}
+            data-test='register-button-footer'
           >
-            {children}
+            register
           </Button>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
@@ -67,7 +68,7 @@ function RegisterDrawerDialog({ children, className, variant, ...props }: Regist
           className={className}
           variant={variant ? variant : 'outline'}
         >
-          {children}
+          register
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -122,6 +123,9 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
         redirect: 'follow',
       });
       const resJson = await res.json();
+      if (res.status >= 500) {
+        throw new Error('Internal server error, please contact admin');
+      }
       if (!res.ok) throw new Error(resJson.errors);
       toast({
         description: 'Registration successful. Please log in.',
@@ -141,7 +145,7 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form data-test='register-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
             control={form.control}
             name='username'
@@ -149,7 +153,13 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your username' type='text' {...field} />
+                  <Input
+                    data-test='input-username-register'
+                    className='text-base py-6'
+                    placeholder='Enter your username'
+                    type='text'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,7 +173,13 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your email' type='email' {...field} />
+                  <Input
+                    data-test='input-email-register'
+                    className='text-base py-6'
+                    placeholder='Enter your email'
+                    type='email'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -177,13 +193,19 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input className='text-base py-6' placeholder='Enter your password' type='password' {...field} />
+                  <Input
+                    data-test='input-password-register'
+                    className='text-base py-6'
+                    placeholder='Enter your password'
+                    type='password'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className='w-full' type='submit'>
+          <Button data-test='submit-button-register' className='w-full' type='submit'>
             Create account
           </Button>
         </form>
@@ -196,6 +218,7 @@ export function RegisterForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.
           onClick={() => {
             setIsLogin(true);
           }}
+          data-test='login-button-register'
         >
           Log in
         </Button>

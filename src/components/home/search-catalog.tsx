@@ -1,18 +1,26 @@
 'use client';
 
+import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
+import { Search } from 'lucide-react';
+import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import Loader from '../ui/loader';
 import SearchInput from '../ui/search';
-import { Search } from 'lucide-react';
 
-const DATA = ['helloworld'];
 const SEARCH_EVENT = 'search';
+
+interface SearchedI {
+  id: string;
+  title: string;
+  user_id: string;
+  custom_code?: string;
+}
 
 function SearchCatalog() {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState<string[]>([]);
+  const [searched, setSearched] = useState<SearchedI[]>([]);
 
   const onInput = (e: FormEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
@@ -26,11 +34,24 @@ function SearchCatalog() {
     addCustomListener(SEARCH_EVENT, ((e: CustomEvent<string>) => {
       clearTimeout(id);
       const val = e.detail;
-      id = setTimeout(() => {
+      id = setTimeout(async () => {
         if (val === '') {
           setSearched([]);
         } else {
-          setSearched(DATA.filter((title) => title.toLowerCase().search(val.toLowerCase()) !== -1));
+          const response = await fetch(`${HOST}/catalog/search?id=${val}`, {
+            method: 'GET',
+            redirect: 'follow',
+          });
+          const result = await response.json();
+          if (response.status >= 500) {
+            throw new Error('Internal server error, please contact admin');
+          }
+          if (!response.ok) {
+            throw new Error(result.errors ? result.errors : response.statusText);
+          }
+
+          const data: SearchedI[] = result.data;
+          setSearched(data);
         }
         setLoading(false);
       }, 1000);
@@ -54,7 +75,7 @@ function SearchCatalog() {
             className={`sm:text-lg text-base py-6 sm:py-7 border-l-0 rounded-l-none border-none`}
             value={value}
             onInput={onInput}
-            onKeyUp={() => {}}
+            data-test='search-catalog'
           />
         </div>
         <SearchedList loading={loading} searched={searched} />
@@ -65,7 +86,7 @@ function SearchCatalog() {
 
 export default SearchCatalog;
 
-function SearchedList({ loading, searched }: { loading: boolean; searched: string[] }) {
+function SearchedList({ loading, searched }: { loading: boolean; searched: SearchedI[] }) {
   if (loading || searched.length !== 0) {
     return (
       <div className='w-full bg-background rounded-b-2xl text-base h-fit'>
@@ -76,11 +97,19 @@ function SearchedList({ loading, searched }: { loading: boolean; searched: strin
         )}
         {searched.length !== 0 &&
           !loading &&
-          searched.map((data) => (
-            <p className='text-sm font-semibold leading-none p-5 px-7 capitalize hover:bg-secondary rounded-b-2xl hover:cursor-pointer'>
-              {data}
-            </p>
-          ))}
+          searched.map(
+            (data, index) =>
+              index < 3 && (
+                <Link data-test='searched-item' key={data.id} href={`/u/${data.user_id}/${data.id}`}>
+                  <div className='text-sm font-semibold leading-none py-4 px-7 capitalize hover:bg-secondary rounded-b-2xl hover:cursor-pointer'>
+                    <p data-test='searched-title'>{data.title}</p>
+                    <p className='font-medium leading-none text-sm text-muted-foreground mt-1 normal-case'>
+                      {data.custom_code ? data.custom_code : data.id}
+                    </p>
+                  </div>
+                </Link>
+              )
+          )}
       </div>
     );
   }
