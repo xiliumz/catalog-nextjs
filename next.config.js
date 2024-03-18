@@ -19,7 +19,7 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: process.env.hostname,
-        port: process.env.port,
+        port: '',
         pathname: '/images/**',
       },
     ],

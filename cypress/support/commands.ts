@@ -24,7 +24,7 @@ declare namespace Cypress {
   interface Chainable {
     getDataTest(dataTestAttribute: string): Chainable<JQuery<HTMLElement>>;
     createCatalog(option: createCatalogProps): void;
-    login(email?: string, password?: string): void;
+    login(name?: string, email?: string, password?: string): void;
     deleteTag(index?: number): void;
     deleteCatalog(total?: number): void;
     dashboardMoreButton(option: 'delete' | 'share' | 'view', index?: number): void;
@@ -66,8 +66,8 @@ Cypress.Commands.add('createCatalog', (option) => {
   cy.location('pathname').should('equal', '/dashboard');
 });
 
-Cypress.Commands.add('login', (email, password) => {
-  cy.session('login', () => {
+Cypress.Commands.add('login', (name, email, password) => {
+  cy.session(name || 'login', () => {
     cy.visit(`http://localhost:3000/`);
     // Open login dialog
     cy.getDataTest('login-button').eq(0).click();
@@ -76,8 +76,9 @@ Cypress.Commands.add('login', (email, password) => {
     cy.getDataTest('email-input').type(email || 'qwe@qwe.com');
     cy.getDataTest('password-input').type(password || 'qweqwe');
     // submit
+    cy.intercept('GET', '**/dashboard').as('dashboard');
     cy.getDataTest('submit-login').click();
-    cy.wait(1000);
+    cy.wait('@dashboard');
     cy.location('pathname').should('equal', '/dashboard');
   });
   cy.visit(`http://localhost:3000/`);

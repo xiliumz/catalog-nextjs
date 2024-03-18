@@ -36,7 +36,6 @@ export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
           return { ..._ };
         });
         setCatalog({ ...data, catalogs });
-        console.log({ ...data, catalogs });
       } catch (e) {
         if (e instanceof Error) {
           toast({

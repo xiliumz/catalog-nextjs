@@ -123,7 +123,6 @@ export default function CreateForm() {
           })
         )
       );
-      // console.log(JSON.parse(formData.get('items')));
     }
 
     try {

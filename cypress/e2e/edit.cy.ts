@@ -74,6 +74,7 @@ describe('edit catalog', () => {
       cy.location('pathname').should('equal', '/dashboard');
     });
     cy.visit(`http://localhost:3000/`);
+    cy.wait(5000);
     getDataTest('profile-dropdown').click();
     getDataTest('dashboard-button').click();
   });
@@ -196,7 +197,7 @@ describe('edit catalog', () => {
 
 describe('fail test', () => {});
 
-describe.only('create and edit tag', () => {
+describe('create and edit tag', () => {
   const initCatalog = {
     title: 'Test 1',
     desc: 'Lorem ipsum',
@@ -273,11 +274,11 @@ describe.only('create and edit tag', () => {
     ],
   };
   before(() => {
-    cy.login();
+    cy.login('login1');
     cy.createCatalog(initCatalog);
   });
   beforeEach(() => {
-    cy.login();
+    cy.login('login1');
   });
   it('should create multiple tags', () => {
     cy.visit('http://localhost:3000/dashboard');
@@ -367,7 +368,7 @@ describe.only('create and edit tag', () => {
   });
 
   after(() => {
-    cy.login();
+    cy.login('login1');
     cy.deleteCatalog(1);
   });
 });
