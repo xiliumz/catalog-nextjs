@@ -1,22 +1,30 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { FormEvent, HTMLAttributes, useEffect, useState } from 'react';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import { FormEvent, HTMLAttributes, useEffect, useMemo, useState } from 'react';
 import { catalogProps } from '../dashboard/catalogs-container';
+import { AspectRatio } from '../ui/aspect-ratio';
 import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
-import ViewItem from './view-item';
-import ViewTag from './view-tag';
 import { Skeleton } from '../ui/skeleton';
-import { AspectRatio } from '../ui/aspect-ratio';
+import ItemsSection from './item-section';
+import TagsSection from './tag-section';
 
 export interface contentProps extends HTMLAttributes<HTMLDivElement> {
   catalogs: catalogProps[];
-  tag?: string[];
 }
 
-export default function ViewContent({ catalogs: item, tag, className, ...props }: contentProps) {
+export default function ViewContent({ catalogs: item, className, ...props }: contentProps) {
   const [search, setSearch] = useState('');
+  const [checked, setChecked] = useState<string[]>([]);
   const [catalogs, setCatalogs] = useState<catalogProps[] | undefined>();
+  const tags = useMemo(
+    () =>
+      catalogs
+        ?.flatMap((val) => val.tags)
+        .filter((obj, index, self) => index === self.findIndex((o) => o.id === obj.id)),
+    [catalogs]
+  );
 
   useEffect(() => {
     setCatalogs(item);
@@ -33,6 +41,27 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
     });
   };
 
+  const handleCheckboxChange = (e: CheckedState, id: string) => {
+    const isChecked = e;
+    let newChecked: string[];
+
+    if (isChecked) {
+      newChecked = [...checked, id];
+    } else {
+      newChecked = checked.filter((checkedId) => checkedId !== id);
+    }
+    setChecked(newChecked);
+
+    setCatalogs(() => {
+      // Filter catalogs based on whether the checkbox is checked or not
+      const filteredCatalogs =
+        newChecked.length > 0
+          ? item.filter((catalog) => newChecked.every((tag) => catalog.tags?.some((_tag) => _tag.id === tag)))
+          : item;
+      return filteredCatalogs;
+    });
+  };
+
   if (!catalogs) {
     return (
       <>
@@ -44,7 +73,6 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
           value={search}
         />
         <div className={cn('w-full sm:flex mt-2', className)} {...props}>
-          <ViewTag id='1' tag='Tag 1' />
           <Separator className='h-auto hidden sm:block' orientation='vertical' />
           <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
             <div className='shadow-md rounded-sm px-3 py-4'>
@@ -85,8 +113,6 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
           value={search}
         />
         <div className={cn('w-full sm:flex mt-2', className)} {...props}>
-          <ViewTag id='1' tag='Tag 1' />
-          <Separator className='h-auto hidden sm:block' orientation='vertical' />
           <NoContent />
         </div>
       </>
@@ -96,20 +122,24 @@ export default function ViewContent({ catalogs: item, tag, className, ...props }
   return (
     <>
       <Input
-        className='w-full'
+        className='w-full py-2 mb-6'
         data-test='view-search'
-        placeholder='Find an insteresting product . . . '
+        placeholder='Find an interesting product...'
         onInput={onInput}
         value={search}
       />
       <div className={cn('w-full sm:flex mt-2', className)} {...props}>
-        <ViewTag id='1' tag='Tag 1' />
+        <TagsSection
+          tags={
+            tags as {
+              id: string;
+              name: string;
+            }[]
+          }
+          handleCheckboxChange={handleCheckboxChange}
+        />
         <Separator className='h-auto hidden sm:block' orientation='vertical' />
-        <div className='w-full sm:pl-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6'>
-          {catalogs.map((item) => (
-            <ViewItem title={item.title} desc={item.desc} imagePath={item.imagePath} key={item.id} />
-          ))}
-        </div>
+        <ItemsSection catalogs={catalogs} />
       </div>
     </>
   );

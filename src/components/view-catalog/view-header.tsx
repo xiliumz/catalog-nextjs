@@ -21,11 +21,15 @@ export default function ViewHeader({ titleParam, descParam }: { titleParam?: str
       ) : (
         <Skeleton className='h-9 w-full lg:h-12' />
       )}
-      <br />
       {desc != undefined ? (
-        <CardDescription data-test='view-desc' className='min-h-5'>
-          {desc}
-        </CardDescription>
+        desc !== '' && (
+          <>
+            <br />
+            <CardDescription data-test='view-desc' className='min-h-5'>
+              {desc}
+            </CardDescription>
+          </>
+        )
       ) : (
         <Skeleton className='h-5 w-full' />
       )}
