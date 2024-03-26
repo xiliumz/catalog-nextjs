@@ -237,7 +237,7 @@ export default function CreateForm() {
                             <HelpCircle className='fill-foreground text-background' size={15} />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>This is your custom code that you can share. This will be like</p>
+                            <p>This is your custom code that you can share. This will be like: username/customcode</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -413,9 +413,21 @@ export function CatalogItem({
       </FormItem>
 
       <FormItem className='w-full px-4'>
-        <FormLabel className='text-sm font-medium leading-none' htmlFor={`item-tag-${index}`}>
-          Tags
-        </FormLabel>
+        <div className='flex items-center py-1 gap-1'>
+          <FormLabel className='text-sm font-medium leading-none' htmlFor={`item-tag-${index}`}>
+            Tags
+          </FormLabel>
+          <TooltipProvider delayDuration={400}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className='fill-foreground text-background' size={15} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Press enter to create tag. You can create multiple tags</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <ReactTags
           tags={_tags}
           suggestions={tagSuggestion}
@@ -456,7 +468,7 @@ export function CatalogItem({
           </p>
         )}
         <FormLabel
-          className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground rounded mr-28'
+          className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full'
           htmlFor={`item-img${index}`}
           data-test='item-file-input'
         >

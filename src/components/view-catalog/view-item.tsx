@@ -14,7 +14,7 @@ export default function ViewItem({ title, desc, imagePath = '', tags }: ViewItem
       <AspectRatio ratio={1 / 1}>
         {imagePath ? (
           <Image
-            className='bg-muted rounded-sm w-full h-full object-cover transition-all hover:scale-105 portrait:'
+            className='rounded-sm w-full h-full object-contain transition-all hover:scale-105 portrait:'
             width={500}
             height={500}
             alt=''

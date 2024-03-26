@@ -129,16 +129,20 @@ export default function ViewContent({ catalogs: item, className, ...props }: con
         value={search}
       />
       <div className={cn('w-full sm:flex mt-2', className)} {...props}>
-        <TagsSection
-          tags={
-            tags as {
-              id: string;
-              name: string;
-            }[]
-          }
-          handleCheckboxChange={handleCheckboxChange}
-        />
-        <Separator className='h-auto hidden sm:block' orientation='vertical' />
+        {tags && tags.length > 0 && (
+          <>
+            <TagsSection
+              tags={
+                tags as {
+                  id: string;
+                  name: string;
+                }[]
+              }
+              handleCheckboxChange={handleCheckboxChange}
+            />
+            <Separator className='h-auto hidden sm:block' orientation='vertical' />
+          </>
+        )}
         <ItemsSection catalogs={catalogs} />
       </div>
     </>

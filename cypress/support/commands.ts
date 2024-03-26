@@ -76,9 +76,8 @@ Cypress.Commands.add('login', (name, email, password) => {
     cy.getDataTest('email-input').type(email || 'qwe@qwe.com');
     cy.getDataTest('password-input').type(password || 'qweqwe');
     // submit
-    cy.intercept('GET', '**/dashboard').as('dashboard');
     cy.getDataTest('submit-login').click();
-    cy.wait('@dashboard');
+    cy.wait(5000);
     cy.location('pathname').should('equal', '/dashboard');
   });
   cy.visit(`http://localhost:3000/`);

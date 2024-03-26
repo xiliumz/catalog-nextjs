@@ -228,7 +228,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
                             <HelpCircle className='fill-foreground text-background' size={15} />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>This is your custom code that you can share. This will be like</p>
+                            <p>This is your custom code that you can share. This will be like: username/customcode</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
