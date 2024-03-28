@@ -6,20 +6,15 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'i.scdn.co',
-        port: '',
-        pathname: '/image/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
+        protocol: 'http',
+        hostname: process.env.hostname,
+        port: '9000',
+        pathname: '/images/**',
       },
       {
         protocol: 'http',
         hostname: process.env.hostname,
-        port: '9000',
+        port: '',
         pathname: '/images/**',
       },
     ],

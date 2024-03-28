@@ -18,6 +18,7 @@ import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
 import { useState } from 'react';
+import Loader from '../ui/loader';
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -315,7 +316,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
               className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'
               type='submit'
             >
-              Submit
+              {form.formState.isSubmitSuccessful ? <Loader /> : 'Submit'}
             </Button>
           </CardFooter>
         </form>

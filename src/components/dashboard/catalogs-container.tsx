@@ -35,6 +35,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[] | undefined>();
   const { toast } = useToast();
   const router = useRouter();
+  console.log(process.env.host);
 
   const onShare = (id: string) => {
     const token = Cookies.get('session');
