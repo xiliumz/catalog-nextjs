@@ -25,6 +25,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import Google from '../ui/google';
 import { useToast } from '../ui/use-toast';
 import { RegisterForm } from './register';
+import Loader from '../ui/loader';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -168,10 +169,10 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
 
   return (
     <>
-      <Button className='h-fit w-full items-center gap-2 py-3 font-semibold' variant='outline'>
+      {/* <Button className='h-fit w-full items-center gap-2 py-3 font-semibold' variant='outline'>
         <Google /> Continue with Google
-      </Button>
-      <DialogDescription className='text-center mt-6 mb-2'>Or</DialogDescription>
+      </Button> */}
+      {/* <DialogDescription className='text-center mt-6 mb-2'>Or</DialogDescription> */}
       <Form {...form}>
         <form data-test='login-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField
@@ -214,7 +215,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             )}
           />
           <Button className='w-full' type='submit' data-test='submit-login'>
-            Log in
+            {form.formState.isSubmitSuccessful ? <Loader /> : 'Log in'}
           </Button>
         </form>
       </Form>

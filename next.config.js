@@ -7,19 +7,19 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.scdn.co',
-        port: '',
-        pathname: '/image/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/d/**',
       },
       {
         protocol: 'http',
         hostname: process.env.hostname,
         port: '9000',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'http',
+        hostname: process.env.hostname,
+        port: '',
         pathname: '/images/**',
       },
     ],

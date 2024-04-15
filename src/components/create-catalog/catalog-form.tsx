@@ -1,23 +1,23 @@
 'use client';
 import useToken from '@/hooks/use-token';
 import { HOST } from '@/lib/global-var';
-import { getFileExt } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
 import { HelpCircle, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useState } from 'react';
 import { FieldValues, UseFieldArrayRemove, useFieldArray, useForm } from 'react-hook-form';
+import { WithContext as ReactTags } from 'react-tag-input';
 import { z } from 'zod';
 import { catalogProps } from '../dashboard/catalogs-container';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
+import Loader from '../ui/loader';
 import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
-import { WithContext as ReactTags } from 'react-tag-input';
 
 const KeyCodes = {
   tab: 9,
@@ -71,6 +71,7 @@ export default function CreateForm() {
   const user = useToken('id');
   const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
   const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<CatalogFormData>({
     resolver: zodResolver(formSchema),
@@ -88,6 +89,7 @@ export default function CreateForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
+    setLoading(true);
     const customCode = values.customToken;
     if (customCode) {
       if (customCode.indexOf(' ') >= 0) {
@@ -114,12 +116,22 @@ export default function CreateForm() {
         'items',
         JSON.stringify(
           values.items.map((item, i) => {
-            const image = item.img?.item(0);
-            if (image) {
-              const ext = getFileExt(image.name);
-              formData.append('images', image, `${item.id}.${ext}`);
+            const f: File | undefined = item.img?.item(0);
+            let image: File;
+            if (f) {
+              image = f;
+              formData.append('images', image);
+            } else {
+              image = new File([''], 'undefined', { type: 'image/jpeg' });
+              formData.append('images', image);
             }
-            return { id: item.id.toString(), title: item.title, desc: item.desc, tags: itemTags.get(i) };
+            return {
+              id: item.id.toString(),
+              title: item.title,
+              desc: item.desc,
+              tags: itemTags.get(i),
+              imagePath: image.name,
+            };
           })
         )
       );
@@ -140,8 +152,10 @@ export default function CreateForm() {
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
+      setLoading(false);
       router.push('/dashboard');
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         toast({
           variant: 'destructive',
@@ -308,12 +322,13 @@ export default function CreateForm() {
             </FormItem>
           </CardContent>
           <CardFooter className='justify-end'>
-            <input
+            <Button
               data-test='create-submit-button'
               className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'
               type='submit'
-              placeholder='Submit'
-            />
+            >
+              {loading ? <Loader /> : 'Submit'}
+            </Button>
           </CardFooter>
         </form>
       </Form>
@@ -464,7 +479,7 @@ export function CatalogItem({
       <FormItem className='mt-2 w-full px-4'>
         {imagePath && (
           <p className='text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 h-9 text-muted-foreground rounded truncate w-full'>
-            {fileName ? fileName : imagePath}
+            {fileName ? fileName : imagePath.split('o.o')[0]}
           </p>
         )}
         <FormLabel
