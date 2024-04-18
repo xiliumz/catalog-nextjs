@@ -35,6 +35,7 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[] | undefined>();
   const { toast } = useToast();
   const router = useRouter();
+  console.log(process.env.host);
 
   const onShare = (id: string) => {
     const token = Cookies.get('session');
@@ -61,8 +62,18 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     const token = Cookies.get('session');
     const myHeaders = new Headers();
     if (token) myHeaders.append('Authorization', token);
-
+    let deleted: Omit<catalogContainerProps, 'catalogs'> | undefined;
     try {
+      setCatalog((val) => {
+        const newCatalog = val?.flatMap((item) => {
+          if (item.id == id) {
+            deleted = item;
+            return [];
+          }
+          return item;
+        });
+        return newCatalog;
+      });
       const response = await fetch(`${HOST}/catalog/delete/${id}`, {
         method: 'DELETE',
         headers: myHeaders,
@@ -76,12 +87,8 @@ export default function CatalogContainer({ children, className, ...props }: HTML
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
-
-      setCatalog((val) => {
-        const newCatalog = val?.flatMap((item) => (item.id == id ? [] : item));
-        return newCatalog;
-      });
     } catch (e) {
+      setCatalog((val) => (val && deleted ? [...val, deleted] : val ? [...val] : undefined));
       if (e instanceof Error) {
         toast({
           variant: 'destructive',

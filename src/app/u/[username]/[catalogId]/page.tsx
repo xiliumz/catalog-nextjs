@@ -20,7 +20,7 @@ export default function ViewCatalog({ params }: { params: { username: string; ca
           </div>
         </NavigationBar>
         <Container>
-          <Card>
+          <Card className='py-5'>
             <ViewWrapper user={params.username} catalogId={params.catalogId} />
           </Card>
         </Container>

@@ -40,7 +40,7 @@ Cypress.Commands.add('getDataTest', (selector) => {
 });
 
 Cypress.Commands.add('createCatalog', (option) => {
-  const _submit = option.submit || true;
+  const _submit = option.submit === undefined ? true : option.submit;
   cy.visit('http://localhost:3000/create');
   cy.getDataTest('container-title-input').type(option.title);
 
@@ -76,9 +76,8 @@ Cypress.Commands.add('login', (name, email, password) => {
     cy.getDataTest('email-input').type(email || 'qwe@qwe.com');
     cy.getDataTest('password-input').type(password || 'qweqwe');
     // submit
-    cy.intercept('GET', '**/dashboard').as('dashboard');
     cy.getDataTest('submit-login').click();
-    cy.wait('@dashboard');
+    cy.wait(5000);
     cy.location('pathname').should('equal', '/dashboard');
   });
   cy.visit(`http://localhost:3000/`);
