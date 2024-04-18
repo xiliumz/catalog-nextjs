@@ -35,6 +35,9 @@ declare namespace Cypress {
   }
 }
 
+const testEmail = process.env.TEST_EMAIL;
+const testPass = process.env.TEST_PASSWORD;
+
 Cypress.Commands.add('getDataTest', (selector) => {
   return cy.get(`[data-test=${selector}]`);
 });
@@ -73,8 +76,8 @@ Cypress.Commands.add('login', (name, email, password) => {
     cy.getDataTest('login-button').eq(0).click();
     cy.getDataTest('login-form').should('exist');
     // input form
-    cy.getDataTest('email-input').type(email || 'qwe@qwe.com');
-    cy.getDataTest('password-input').type(password || 'qweqwe');
+    cy.getDataTest('email-input').type(email || testEmail);
+    cy.getDataTest('password-input').type(password || testPass);
     // submit
     cy.getDataTest('submit-login').click();
     cy.wait(5000);
