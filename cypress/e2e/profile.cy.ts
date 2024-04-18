@@ -7,7 +7,7 @@ describe('change password', () => {
   });
 
   it('should change password', () => {
-    const newPass = 'SREdtfGYU5U&^I879:p';
+    const newPass = 'asdasd';
     // Open login dialog
     cy.getDataTest('login-button').eq(0).click();
     cy.getDataTest('login-form').should('exist');

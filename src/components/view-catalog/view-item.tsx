@@ -9,16 +9,17 @@ interface ViewItemProps extends Omit<catalogProps, 'id'> {
 }
 
 export default function ViewItem({ title, desc, imagePath = '', tags }: ViewItemProps) {
+  const _url = imagePath ? imagePath.split('o.o')[1] : '';
   return (
     <div className='shadow-md rounded-sm px-3 py-4'>
       <AspectRatio ratio={1 / 1}>
-        {imagePath ? (
+        {_url ? (
           <Image
             className='rounded-sm w-full h-full object-contain transition-all hover:scale-105 portrait:'
             width={500}
             height={500}
             alt=''
-            src={`${process.env.host}/${imagePath}`}
+            src={_url}
             quality={50}
             priority={true}
             data-test='view-item-image'

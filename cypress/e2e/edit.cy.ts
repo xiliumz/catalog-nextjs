@@ -82,6 +82,7 @@ describe('edit catalog', () => {
   it('should edit title, desc, and item without images', () => {
     getDataTest('edit-button').eq(1).click();
     cy.wait(2000);
+    getDataTest('container-title-input').should('have.value', 'Test1');
     getDataTest('container-title-input').clear().type('Title Edited 1');
     getDataTest('container-desc-input')
       .clear()
@@ -173,9 +174,6 @@ describe('edit catalog', () => {
     getDataTest('view-item-desc').eq(0).should('contain.text', 'test2-desc-edited-1');
     getDataTest('view-item-title').eq(1).should('contain.text', 'test2-title-edited-2');
     getDataTest('view-item-desc').eq(1).should('contain.text', 'test2-desc-edited-2');
-  });
-  it('should delete item without images', () => {
-    // TODO
   });
   it("should edit catalog's custom code", () => {
     getDataTest('edit-button').eq(1).click();
@@ -373,6 +371,16 @@ describe('create and edit tag', () => {
   });
 });
 
+// TODO: Delete catalog items
+describe.skip('edit delete item', () => {
+  it('should delete one item to empty the catalog items ', () => {});
+  it('should delete some items to empty the catalog items ', () => {});
+  it('should delete first item', () => {});
+  it('should delete last item', () => {});
+  it('should delete one of the items in the middle', () => {});
+  it('should delete some of the items in the middle', () => {});
+});
+
 describe.skip('manual tests', () => {
   it('should add new item with image', () => {
     throw new Error(
@@ -384,20 +392,3 @@ describe.skip('manual tests', () => {
     throw new Error('Create manual test where (title, desc, all item with image) and replace 2 image');
   });
 });
-
-// it.only('should first', () => {
-//   cy.login();
-//   cy.visit('http://localhost:3000/dashboard');
-//   cy.getDataTest('edit-button').click();
-//   cy.wait(1000);
-//   cy.editCatalog({
-//     title: 'Hello world',
-//     editedItem: [
-//       {
-//         title: 'Halo',
-//         tags: ['Wkkwk'],
-//       },
-//     ],
-//     submit: false,
-//   });
-// });

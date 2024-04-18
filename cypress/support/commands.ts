@@ -40,7 +40,7 @@ Cypress.Commands.add('getDataTest', (selector) => {
 });
 
 Cypress.Commands.add('createCatalog', (option) => {
-  const _submit = option.submit || true;
+  const _submit = option.submit === undefined ? true : option.submit;
   cy.visit('http://localhost:3000/create');
   cy.getDataTest('container-title-input').type(option.title);
 
