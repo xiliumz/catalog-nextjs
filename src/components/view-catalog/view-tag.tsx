@@ -10,13 +10,18 @@ interface ViewTagProps {
 
 export default function ViewTag({ id, tag, handleCheckboxChange }: ViewTagProps) {
   return (
-    <div className='sm:w-1/4  py-2 sm:px-5 sm:py-5'>
-      <div className='flex items-center gap-2 p-1 w-full '>
+    <>
+      {/* <div className='sm:w-1/4 sm:px-5 sm:py-5 w-fit'> */}
+      <div className='flex items-center gap-2 p-1'>
         <Checkbox className='rounded' id={id} onCheckedChange={(e) => handleCheckboxChange(e, id)} />
-        <Label className='w-full' htmlFor={id}>
+        <Label
+          className='w-full inline font-semibold text-nowrap p-1 bg-secondary text-secondary-foreground rounded'
+          htmlFor={id}
+        >
           {tag}
         </Label>
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 }
