@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
 import { HelpCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { UseFormProps, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { AddItem, CatalogFormData, CatalogItem, TagProps } from '../create-catalog/catalog-form';
@@ -18,6 +18,7 @@ import Loader from '../ui/loader';
 import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
+import { LoadingContext } from '@/contexts/LoadingProvider';
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -62,6 +63,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
   const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
   const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const setProgress = useContext(LoadingContext);
 
   const form = useForm<CatalogFormData>({
     defaultValues: {
@@ -79,6 +81,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
 
   // 2. Define a submit handler.
   async function onSubmit(_: any) {
+    if (setProgress) setProgress(30);
     setLoading(true);
     const values: CatalogFormData = _;
     const customCode = values.customToken;
@@ -126,6 +129,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
         )
       );
     }
+    if (setProgress) setProgress(70);
 
     try {
       const response = await fetch(`${HOST}/catalog/update/${catalog?.id}`, {
@@ -134,6 +138,7 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
         body: formData,
         redirect: 'follow',
       });
+      if (setProgress) setProgress(90);
       const result = await response.json();
 
       if (response.status >= 500) {
@@ -142,9 +147,11 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
+      if (setProgress) setProgress(100);
       router.push('/dashboard');
       setLoading(false);
     } catch (error) {
+      if (setProgress) setProgress(100);
       setLoading(false);
       if (error instanceof Error) {
         toast({

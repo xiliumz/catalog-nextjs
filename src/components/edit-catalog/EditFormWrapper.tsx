@@ -1,17 +1,21 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { catalogContainerProps, sessionProps } from '../dashboard/catalogs-container';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { HOST } from '@/lib/global-var';
 import { useToast } from '../ui/use-toast';
 import EditForm from './EditForm';
+import { LoadingContext } from '@/contexts/LoadingProvider';
 
 export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
   const [catalog, setCatalog] = useState<catalogContainerProps>();
   const { toast } = useToast();
+  const setProgress = useContext(LoadingContext);
 
   useEffect(() => {
+    if (!setProgress) return;
+    setProgress(90);
     const token = Cookies.get('session');
     if (!token) return;
 
@@ -35,6 +39,7 @@ export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
           }
           return { ..._ };
         });
+        setProgress(100);
         setCatalog({ ...data, catalogs });
       } catch (e) {
         if (e instanceof Error) {

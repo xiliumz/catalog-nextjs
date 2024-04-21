@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CardContent } from './ui/card';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { HOST } from '@/lib/global-var';
 import { useToast } from './ui/use-toast';
+import { LoadingContext } from '@/contexts/LoadingProvider';
+import Loader from './ui/loader';
 
 const formSchema = z.object({
   name: z.string().max(100).optional(),
@@ -20,6 +22,8 @@ const formSchema = z.object({
 export default function ProfileForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const setProgress = useContext(LoadingContext);
 
   useEffect(() => {
     router.prefetch('/dashboard');
@@ -36,6 +40,9 @@ export default function ProfileForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!setProgress) return;
+    setLoading(true);
+    setProgress(10);
     const myHeader = new Headers();
     myHeader.append('Content-Type', 'application/json');
     const token = Cookies.get('session');
@@ -44,6 +51,7 @@ export default function ProfileForm() {
     if (values.name) raw.name = values.name;
     if (values.password) raw.password = values.password;
 
+    setProgress(50);
     const submitProfile = async () => {
       try {
         const response = await fetch(`${HOST}/users/current`, {
@@ -52,6 +60,7 @@ export default function ProfileForm() {
           body: JSON.stringify(raw),
           redirect: 'follow',
         });
+        setProgress(90);
         const result = await response.json();
 
         if (response.status >= 500) {
@@ -68,8 +77,10 @@ export default function ProfileForm() {
         });
         setTimeout(() => {
           router.push('/dashboard');
-        }, 1000);
+        }, 900);
+        setProgress(100);
       } catch (error) {
+        setProgress(100);
         // ❌ If error
         if (error instanceof Error) {
           toast({
@@ -119,7 +130,7 @@ export default function ProfileForm() {
 
           <div className='w-full text-right'>
             <Button className='ml-auto' type='submit' data-test='profile-submit'>
-              Submit
+              {loading ? <Loader /> : 'Submit'}
             </Button>
           </div>
         </form>
