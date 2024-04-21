@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import { LoadingContext } from '@/contexts/LoadingProvider';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { HOST } from '@/lib/global-var';
 import { addCustomListener, emitEvent, removeCustomListener } from '@/lib/utils';
@@ -22,10 +23,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import Google from '../ui/google';
+import Loader from '../ui/loader';
 import { useToast } from '../ui/use-toast';
 import { RegisterForm } from './register';
-import Loader from '../ui/loader';
 
 interface LoginProps extends ButtonProps {}
 export const LOGIN_EVENT = 'login';
@@ -46,55 +46,59 @@ export function LoginDrawerDialog({ className, variant, ...props }: LoginProps) 
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
-        <DialogTrigger asChild>
+      <>
+        <Dialog open={open} onOpenChange={(e) => setOpenLogin(e)}>
+          <DialogTrigger asChild>
+            <Button
+              {...props}
+              onClick={() => {
+                emitEvent(LOGIN_EVENT);
+              }}
+              className={className}
+              variant={variant ? variant : 'outline'}
+              data-test='login-button'
+            >
+              Log in
+            </Button>
+          </DialogTrigger>
+          <DialogContent data-test='login-dialog' className='sm:max-w-[425px]'>
+            <div className='px-3 py-6'>
+              <DialogHeader className='mb-10 text-muted-foreground'>
+                <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
+              </DialogHeader>
+              {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegisterForm setIsLogin={setIsLogin} />}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Drawer open={open} onOpenChange={setOpenLogin}>
+        <DrawerTrigger asChild>
           <Button
             {...props}
+            className={className}
             onClick={() => {
               emitEvent(LOGIN_EVENT);
             }}
-            className={className}
             variant={variant ? variant : 'outline'}
-            data-test='login-button'
           >
             Log in
           </Button>
-        </DialogTrigger>
-        <DialogContent data-test='login-dialog' className='sm:max-w-[425px]'>
-          <div className='px-3 py-6'>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className='px-4 py-5'>
             <DialogHeader className='mb-10 text-muted-foreground'>
               <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
             </DialogHeader>
             {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegisterForm setIsLogin={setIsLogin} />}
           </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return (
-    <Drawer open={open} onOpenChange={setOpenLogin}>
-      <DrawerTrigger asChild>
-        <Button
-          {...props}
-          className={className}
-          onClick={() => {
-            emitEvent(LOGIN_EVENT);
-          }}
-          variant={variant ? variant : 'outline'}
-        >
-          Log in
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className='px-4 py-5'>
-          <DialogHeader className='mb-10 text-muted-foreground'>
-            <DialogTitle className='text-center'>Welcome to Cataog App</DialogTitle>
-          </DialogHeader>
-          {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegisterForm setIsLogin={setIsLogin} />}
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }
 
@@ -104,9 +108,10 @@ const loginSchema = z.object({
 });
 
 export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.SetStateAction<boolean>> }) {
+  const [loading, setLoading] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
-
+  const setProgress = React.useContext(LoadingContext);
   // 1. Define your form.
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -118,6 +123,10 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof loginSchema>) {
+    if (setProgress === null) return;
+
+    setLoading(true);
+    setProgress(10);
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
 
@@ -125,7 +134,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
       email: values.email,
       password: values.password,
     });
-
+    setProgress(50);
     const login = async () => {
       try {
         const response = await fetch(`${HOST}/users/login`, {
@@ -134,6 +143,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           body: raw,
           redirect: 'follow',
         });
+        setProgress(70);
         const result = await response.json();
 
         if (response.status >= 500) {
@@ -143,6 +153,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           throw new Error(result.errors ? result.errors : response.statusText);
         }
 
+        setProgress(90);
         const token = result.data.token;
         const decoded = jwtDecode(token);
         const exp = Math.ceil(((decoded.exp as number) - (decoded.iat as number)) / (3600 * 24));
@@ -153,8 +164,12 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
           secure: true,
         });
         router.push('/dashboard');
+        setProgress(100);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         if (error instanceof Error) {
+          setProgress(100);
           Cookies.remove('session');
           toast({
             variant: 'destructive',
@@ -215,7 +230,7 @@ export function LoginForm({ setIsLogin }: { setIsLogin: React.Dispatch<React.Set
             )}
           />
           <Button className='w-full' type='submit' data-test='submit-login'>
-            {form.formState.isSubmitSuccessful ? <Loader /> : 'Log in'}
+            {loading ? <Loader /> : 'Log in'}
           </Button>
         </form>
       </Form>

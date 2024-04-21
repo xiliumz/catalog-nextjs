@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
 import { HelpCircle, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useContext, useState } from 'react';
 import { FieldValues, UseFieldArrayRemove, useFieldArray, useForm } from 'react-hook-form';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import Loader from '../ui/loader';
 import { Textarea } from '../ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
+import { LoadingContext } from '@/contexts/LoadingProvider';
 
 const KeyCodes = {
   tab: 9,
@@ -72,6 +73,7 @@ export default function CreateForm() {
   const [tagSuggestions, setTagSuggestions] = useState<TagProps[]>([]);
   const [itemTags, setItemTags] = useState<Map<number, TagProps[]>>(new Map());
   const [loading, setLoading] = useState(false);
+  const setProgress = useContext(LoadingContext);
 
   const form = useForm<CatalogFormData>({
     resolver: zodResolver(formSchema),
@@ -89,6 +91,7 @@ export default function CreateForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: CatalogFormData) {
+    if (setProgress) setProgress(30);
     setLoading(true);
     const customCode = values.customToken;
     if (customCode) {
@@ -136,6 +139,7 @@ export default function CreateForm() {
         )
       );
     }
+    if (setProgress) setProgress(70);
 
     try {
       const response = await fetch(`${HOST}/catalog/create`, {
@@ -144,6 +148,7 @@ export default function CreateForm() {
         body: formData,
         redirect: 'follow',
       });
+      if (setProgress) setProgress(90);
       const result = await response.json();
 
       if (response.status >= 500) {
@@ -152,9 +157,12 @@ export default function CreateForm() {
       if (!response.ok) {
         throw new Error(result.errors ? result.errors : response.statusText);
       }
+
+      if (setProgress) setProgress(100);
       setLoading(false);
       router.push('/dashboard');
     } catch (error) {
+      if (setProgress) setProgress(100);
       setLoading(false);
       if (error instanceof Error) {
         toast({
@@ -444,6 +452,11 @@ export function CatalogItem({
           </TooltipProvider>
         </div>
         <ReactTags
+          classNames={{
+            tagInputField: 'w-full rounded-sm py-1 px-2 mt-2',
+            tag: 'bg-secondary rounded-sm px-2 py-1',
+            selected: ' flex flex-wrap gap-1',
+          }}
           tags={_tags}
           suggestions={tagSuggestion}
           delimiters={delimiters}

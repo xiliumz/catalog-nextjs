@@ -9,7 +9,7 @@ interface TagsSectionProps {
 export default function TagsSection({ tags, handleCheckboxChange }: TagsSectionProps) {
   return (
     <div>
-      <p>Tags</p>
+      <p className='bg-secondary/50 rounded px-2 font-semibold text-center text-base mb-2 mx-1'>TAGS</p>
       <div className='flex sm:flex-col flex-wrap justify-evenly sm:justify-start pr-2'>
         {tags && tags.length > 0
           ? tags.map((tag: any) => (

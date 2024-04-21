@@ -35,7 +35,6 @@ export default function CatalogContainer({ children, className, ...props }: HTML
   const [catalog, setCatalog] = useState<Omit<catalogContainerProps, 'catalogs'>[] | undefined>();
   const { toast } = useToast();
   const router = useRouter();
-  console.log(process.env.host);
 
   const onShare = (id: string) => {
     const token = Cookies.get('session');
@@ -52,10 +51,6 @@ export default function CatalogContainer({ children, className, ...props }: HTML
     if (!token) return;
     const username = jwtDecode<sessionProps>(token).id;
     router.push(`/u/${username}/${id}`);
-  };
-
-  const onEdit = (id: string) => {
-    router.push(`/edit/${id}`);
   };
 
   const onDelete = async (id: string) => {
@@ -160,7 +155,6 @@ export default function CatalogContainer({ children, className, ...props }: HTML
           return (
             <CatalogCard
               onView={onView}
-              onEdit={onEdit}
               onDelete={onDelete}
               id={val.id}
               title={val.title}
