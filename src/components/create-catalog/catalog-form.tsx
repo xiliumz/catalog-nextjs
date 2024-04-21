@@ -452,6 +452,11 @@ export function CatalogItem({
           </TooltipProvider>
         </div>
         <ReactTags
+          classNames={{
+            tagInputField: 'w-full rounded-sm py-1 px-2 mt-2',
+            tag: 'bg-secondary rounded-sm px-2 py-1',
+            selected: ' flex flex-wrap gap-1',
+          }}
           tags={_tags}
           suggestions={tagSuggestion}
           delimiters={delimiters}
