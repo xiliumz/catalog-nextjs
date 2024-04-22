@@ -128,6 +128,8 @@ export default function EditForm({ catalog }: { catalog?: catalogContainerProps 
           })
         )
       );
+    } else {
+      formData.append('items', JSON.stringify([]));
     }
     if (setProgress) setProgress(70);
 
