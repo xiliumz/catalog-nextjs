@@ -25,7 +25,7 @@ export default function ViewHeader({ titleParam, descParam }: { titleParam?: str
         desc !== '' && (
           <>
             <br />
-            <CardDescription data-test='view-desc' className='min-h-5'>
+            <CardDescription data-test='view-desc' className='min-h-5 text-foreground'>
               {desc}
             </CardDescription>
           </>

@@ -1,9 +1,8 @@
 'use client';
-import React, { HTMLAttributes } from 'react';
-import Container, { containerVariantsProps } from './ui/container';
 import { cn } from '@/lib/utils';
-import { useToast } from './ui/use-toast';
 import Link from 'next/link';
+import { HTMLAttributes } from 'react';
+import Container, { containerVariantsProps } from './ui/container';
 
 interface NavigationBarProps extends HTMLAttributes<HTMLDivElement>, containerVariantsProps {}
 

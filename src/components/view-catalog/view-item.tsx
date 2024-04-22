@@ -49,7 +49,7 @@ export default function ViewItem({ title, desc, imagePath = '', tags }: ViewItem
           <></>
         )}
       </div>
-      <p className='text-sm text-muted-foreground mt-2' data-test='view-item-desc'>
+      <p className='text-sm text-foreground mt-2' data-test='view-item-desc'>
         {desc}
       </p>
     </div>
