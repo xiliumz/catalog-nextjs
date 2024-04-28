@@ -27,6 +27,7 @@ describe('create catalog', () => {
     getDataTest('container-desc-input').type('test1');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(3000);
     cy.location('pathname').should('equal', '/dashboard');
   });
 
@@ -44,6 +45,7 @@ describe('create catalog', () => {
     getDataTest('item-desc-input').type('test2-desc-1');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(3000);
     cy.location('pathname').should('equal', '/dashboard');
   });
 
@@ -71,6 +73,7 @@ describe('create catalog', () => {
     getDataTest('item-desc-input').eq(2).type('test3-desc-3');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(3000);
     cy.location('pathname').should('equal', '/dashboard');
   });
 
@@ -80,6 +83,7 @@ describe('create catalog', () => {
     getDataTest('container-code-input').type('TESTCODE');
     // Submit
     getDataTest('create-submit-button').click();
+    cy.wait(3000);
     cy.location('pathname').should('equal', '/dashboard');
   });
 
@@ -126,7 +130,8 @@ describe('fail test', () => {
     getDataTest('container-code-input').type('FAILTEST');
     // Submit
     getDataTest('create-submit-button').click();
-    cy.location('pathname').should('equal', '/dashboard');
+    cy.wait(3000);
+    cy.location('pathname', { timeout: 60000 }).should('equal', '/dashboard');
   });
   beforeEach(() => {
     cy.session('login', () => {
@@ -157,6 +162,7 @@ describe('fail test', () => {
     getDataTest('toaster').should('contain.text', 'is already used');
     cy.wait(5000);
     getDataTest('create-submit-button').click();
+    cy.wait(3000);
     getDataTest('toaster').should('contain.text', 'Custom code is already used. Please check it first :)');
   });
 

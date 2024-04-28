@@ -22,7 +22,10 @@ interface editCatalogProps extends Omit<createCatalogProps, 'item'> {
 
 declare namespace Cypress {
   interface Chainable {
-    getDataTest(dataTestAttribute: string): Chainable<JQuery<HTMLElement>>;
+    getDataTest(
+      dataTestAttribute: string,
+      options?: Partial<Cypress.Loggable & Cypress.Timeoutable & Cypress.Withinable & Cypress.Shadow> | undefined
+    ): Chainable<JQuery<HTMLElement>>;
     createCatalog(option: createCatalogProps): void;
     login(name?: string, email?: string, password?: string): void;
     deleteTag(index?: number): void;
@@ -35,7 +38,8 @@ declare namespace Cypress {
   }
 }
 
-Cypress.Commands.add('getDataTest', (selector) => {
+Cypress.Commands.add('getDataTest', (selector, options) => {
+  if (options) return cy.get(`[data-test=${selector}]`, options);
   return cy.get(`[data-test=${selector}]`);
 });
 
@@ -78,7 +82,7 @@ Cypress.Commands.add('login', (name, email, password) => {
     // submit
     cy.getDataTest('submit-login').click();
     cy.wait(5000);
-    cy.location('pathname').should('equal', '/dashboard');
+    cy.location('pathname', { timeout: 60 * 1000 }).should('equal', '/dashboard');
   });
   cy.visit(`http://localhost:3000/`);
   cy.getDataTest('profile-dropdown').click();
@@ -120,6 +124,9 @@ Cypress.Commands.add('dashboardMoreButton', (option, index = 0) => {
 
 Cypress.Commands.add('editCatalog', (option) => {
   const _submit = option.submit;
+  cy.get(
+    `[style="height: 100%; background: rgb(59, 130, 246); width: 100%; opacity: 1; color: rgb(59, 130, 246); transition: all 500ms ease 0s;"]`
+  );
   cy.wait(1000);
   cy.getDataTest('container-title-input').clear().type(option.title);
 

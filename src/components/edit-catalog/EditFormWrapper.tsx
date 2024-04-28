@@ -39,9 +39,11 @@ export default function EditFormWrapper({ catalogId }: { catalogId: string }) {
           }
           return { ..._ };
         });
+        catalogs.sort((a, b) => parseInt(a.id) - parseInt(b.id));
         setProgress(100);
         setCatalog({ ...data, catalogs });
       } catch (e) {
+        setProgress(100);
         if (e instanceof Error) {
           toast({
             title: 'Something went wrong',

@@ -10,7 +10,7 @@ function LoadingProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <LoadingBar color='#3b82f6' progress={loading} onLoaderFinished={() => setLoading(0)} />
+      <LoadingBar data-test='loading-bar' color='#3b82f6' progress={loading} onLoaderFinished={() => setLoading(0)} />
       <LoadingContext.Provider value={setLoading}>{children}</LoadingContext.Provider>
     </>
   );

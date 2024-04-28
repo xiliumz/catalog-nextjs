@@ -24,7 +24,8 @@ export default function ViewWrapper({ catalogId, user }: { catalogId: string; us
             result.errors ? result.errors : 'An unexpected error occurred. Please contact the administrator.'
           );
         const data: catalogContainerProps = result;
-        setCatalogContainer(data);
+        const catalogs = data.catalogs.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        setCatalogContainer({ ...data, catalogs });
       } catch (e) {
         if (e instanceof Error) {
           toast({

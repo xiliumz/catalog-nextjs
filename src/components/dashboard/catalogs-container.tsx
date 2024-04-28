@@ -96,12 +96,13 @@ export default function CatalogContainer({ children, className, ...props }: HTML
 
   useEffect(() => {
     const token = Cookies.get('session');
-    const username = jwtDecode<sessionProps>(token as string);
     const myHeaders = new Headers();
-    if (token) myHeaders.append('Authorization', token);
 
     async function fetchCatalogData() {
       try {
+        if (!token) throw new Error('Session not found, please login again');
+        const username = jwtDecode<sessionProps>(token as string);
+        myHeaders.append('Authorization', token);
         const response = await fetch(`${HOST}/catalog/${username.id}`, {
           method: 'GET',
           headers: myHeaders,
